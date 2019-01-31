@@ -2,14 +2,18 @@ package org.jgtdsl.reports;
 import java.net.URL;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-
+import org.jgtdsl.enums.Area;
 import javax.servlet.ServletContext;
 
 import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter.Black;
+import org.apache.struts2.ServletActionContext;
+import org.jgtdsl.dto.UserDTO;
 
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -33,12 +37,12 @@ import java.text.*;
 
 
 
-public class ReportFormat extends PdfPageEventHelper
+public class ReportFormat2 extends PdfPageEventHelper
 {  private static final long serialVersionUID = 1L;
 
    String header=new Date().toString();
    int count=0;
-   
+   public  ServletContext servlet;
    
 
 
@@ -50,9 +54,20 @@ public class ReportFormat extends PdfPageEventHelper
 	public PdfPCell pcell;
 	
 	public int header1;
-	  static Font font1 = new Font(Font.FontFamily.HELVETICA  , 8, Font.BOLD);
-      static Font font2 = new Font(Font.FontFamily.HELVETICA  , 8, Font.NORMAL);
+	static Font font1 = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+	static Font font2 = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
 
+	static Font fonth = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
+
+	static Font font1nb = new Font(Font.FontFamily.HELVETICA, 13, Font.NORMAL);
+	static Font font3 = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
+
+	static DecimalFormat taka_format = new DecimalFormat("#,##,##,##,##,##0.00");
+	static DecimalFormat consumption_format = new DecimalFormat(
+			"##########0.000");
+      
+      
+      UserDTO loggedInUser=(UserDTO) ServletActionContext.getRequest().getSession().getAttribute("user");
 
 
 	
@@ -61,7 +76,7 @@ public class ReportFormat extends PdfPageEventHelper
    
 	
 
-	public ReportFormat(ServletContext sContext) {
+	public ReportFormat2(ServletContext sContext) {
 		
 		this.servletContext = sContext;
 	}
@@ -100,9 +115,6 @@ public void onStartPage(PdfWriter writer, Document document) {
 	try {
 		
 		
-		if(writer.getPageNumber()==1)
-		{
-			
 			
 		PdfPTable headerTable = new PdfPTable(3);
 	    Rectangle page = document.getPageSize();
@@ -128,10 +140,26 @@ public void onStartPage(PdfWriter writer, Document document) {
 		pcell.setBorder(Rectangle.NO_BORDER);	
 		mTable.addCell(pcell);
 		
-		pcell=new PdfPCell(new Paragraph("(A company of PetroBangla)", ReportUtil.f8B));
+		pcell=new PdfPCell(new Paragraph("(A company of PetroBangla)", ReportUtil.f10B));
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		pcell.setBorder(Rectangle.NO_BORDER);
 		mTable.addCell(pcell);
+		
+		Chunk chunk1 = new Chunk("REGIONAL OFFICE : ",font3);
+		Chunk chunk2 = new Chunk(String.valueOf(Area.values()[Integer.valueOf(loggedInUser.getArea_id())-1]),font3);
+		Paragraph p = new Paragraph(); 
+		p.add(chunk1);
+		p.add(chunk2);
+		pcell=new PdfPCell(p);
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setBorder(0);
+		mTable.addCell(pcell);
+		
+		pcell=new PdfPCell(new Paragraph(" ", ReportUtil.f8B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setBorder(Rectangle.NO_BORDER);
+		mTable.addCell(pcell);
+		
 				
 		pcell=new PdfPCell(mTable);
 		pcell.setBorder(Rectangle.BOTTOM);
@@ -144,8 +172,8 @@ public void onStartPage(PdfWriter writer, Document document) {
 		headerTable.addCell(pcell);
 		
 			
-		//headerTable.writeSelectedRows(0, -1, 0, page.getHeight(), writer.getDirectContent());		
-		}
+		headerTable.writeSelectedRows(0, -1, 0, page.getHeight(), writer.getDirectContent());		
+		
 		
 	} catch (DocumentException e1) {
 		// TODO Auto-generated catch block
@@ -163,6 +191,7 @@ public void onStartPage(PdfWriter writer, Document document) {
 
 
 }
+
 
 
 
@@ -337,7 +366,13 @@ private static PdfPCell createTableNotHeaderCell(final String text){
 
 
 
+public ServletContext getServlet() {
+	return servlet;
+}
 
+public void setServletContext(ServletContext servlet) {
+	this.servlet = servlet;
+}
 
 
 
