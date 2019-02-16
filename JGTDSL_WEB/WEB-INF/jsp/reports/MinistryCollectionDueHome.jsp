@@ -29,17 +29,7 @@ font-size: 12px;
 				</div>
 				<div class="w-box-content" style="padding: 10px;" id="content_div">
 				
-     				<form id="billProcessForm" name="billProcessForm" action="FeesCollectionStmntReport.action" style="margin-bottom: 1px;">
-     				<div class="alert alert-info">
-									<table width="100%" align="center">
-										<tr>
-											<td width="100%" align="right" style="font-size: 12px;font-weight: bold;">
-												<input type="checkbox" value="CoWColl"  name="report_for" checked="checked" /> Customer Wise fees Collection&nbsp;&nbsp;&nbsp;
-
-											</td>											
-										</tr>
-									</table>
-                                </div>
+     				<form id="billProcessForm" name="billProcessForm" action="ministryCollDueReport.action" style="margin-bottom: 1px;">
 						
 						<div class="row-fluid">							
 							<div class="span6">									    

@@ -19,7 +19,7 @@
 				<interceptor-ref name="defaultSecurityStack" />
 				<interceptor-ref name="authenticationInterceptor">
 					<param name="excludeActions">CustomError,index,userList,gridRecordFetcher,addNewForm,dashBoard,
-					checkValidity,logout,login,getServerMessage,fetchAllRoleTypes,fetchCustomerCategory,fetchBanks,fetchBranches,fetchZones,
+					checkValidity,logout,login,websiteView,getServerMessage,fetchAllRoleTypes,fetchCustomerCategory,fetchBanks,fetchBranches,fetchZones,
 					fetchZone,fetchDistrict,fetchUpazila,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,
 					getCustomerBillInfo,downloadMeteredBill, printLedger, downloadNonMeteredBill,clearnessCertificateHome,clearnessCertificateInfo, clearnessCertificateInfoPrePrinted, clearnessUnderCertificateInfo,
 					getBillInfo,payInfo,getIpgConfirmationPage,receiveIpgResponse,getiPgDetailInfo,payIpgBill
@@ -29,16 +29,16 @@
 					<param name="roleActions">*: CustomError,index,home,gridRecordFetcher,fetchAllRoleTypes,fetchCustomerCategory,
 												 blankPage,
 												 fetchBanks,fetchBranches,fetchZones,fetchAccounts,fetchMohollahs,
-												 fileUploader,addNewForm,dashBoard,checkValidity,logout,login,
+												 fileUploader,addNewForm,dashBoard,checkValidity,logout,login,websiteView, 
 												 valiateCategoryId,getServerMessage,crudOperations,fetchZone,fetchDivision,fetchDistrict,fetchUpazila,
 												 getCustomerBillInfo,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,
 												 getBillInfo,payInfo,getIpgConfirmationPage,receiveIpgResponse,getiPgDetailInfo,payIpgBill;
 												 
-					Super Admin: dashBoard,userDashBoard,dashBoardContent,setUserArea,
+					Super Admin: dashBoard,userDashBoard,dashBoardContent,setUserArea,saveFFCollection,getCollectionLedger,
 								 addUser,getCustomerCategoryList,getUserList,getCustomerCategoryList,
 								 getMeterTypeList,getBankList,getBranchList,getAccountList,getAreaList,getTariffList,changeCustomerId, newCustomer,
 								 ownershipChange,updateOwnershipInfo,updateCustomerInformation,editCustomerInfoHome,updateCustomerInfo, changeCustomerIDaction, 
-								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo,getApplianceInfoPlain,getApplianceInfo,getTariffDistribution,editTariffMargin,getDueBillList,
+								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo, getDepositInfo,,getApplianceInfoPlain,getApplianceInfo,getTariffDistribution,editTariffMargin,getDueBillList,areaWiseAdvCollectionHome,
 								 								 								
 								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,
 								 saveDisconnInfo,saveReconnInfo,
@@ -48,7 +48,7 @@
 								 getSecurityAndOtherDepositList,
 								 getDepositDetail,getNewDepositForm,getDepositFormEditMode,securityDepositExpList,
 								 
-								 saveConnectionInfo,getDefaultSurchargePayWithin,
+								 saveConnectionInfo,getDefaultSurchargePayWithin, mixedCustomerInfoHome,
 								 
 								 getCustomerList,getConnectionLedgerGrid, getCustomerLedger,processCustomerLedgerBalance,
 								 
@@ -81,7 +81,7 @@
 								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,editTariffMargin,
 								 billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
-								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
+								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection, saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveAdvancedCollection,checkDueAmount,saveMultiMonthCollection,
 								 getBillingInfo,getGasPrice,currentMonthBillCollection,saveCurrentMonthBillWithCollection,
 								 getOpeningBalance,
@@ -97,13 +97,13 @@
 								 
 								 surchargeCalHome,saveSurchargeInfo,installmentBillingHome,saveInstallments,getBillInstallments,installmentCollection,saveInstallmentCollection,
 								 
-								 reportHome,areaReport,vatRebateHome,vatRebateInfo,custListHome,custListInfo,
+								 reportHome,areaReport,vatRebateHome,vatRebateInfo,custListHome, balancingReportAction,  balancingReportAction, balancingReport, custListInfo,
 								 
 								 monthlySalesStmtReport,salesReportHome,nonmeterLoadIncreaseHome,nonmeterLoadIncraseInfo,nonmeterReconnectionHome,nonmeterReconnectionInfo,nonmeterConnectionHome,nonmeterConnectionInfo,
 								 nonmeterDisconnectionHome,nonmeterDisconnectionInfo,meterReadingInfoHome,meterReadingInfo,securityDepositInfo,securityDepositHome,defaulterCustomerInfoHome,
 								 maximumLoadExceedInfo,maximumLoadExceedHome,securityDepositRequiredInfo,securityDepositRequiredHome,advancedPaidCustomerInfoHome,advancePaidCustomerInfo,
-								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionDetails, freedomFighterInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, feesCollectionReportHome,,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,salesSummaryHome,monthlySalesSummaryReport,
-								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,certificationSummeryHome,certificationSummeryReport,billPreviewHome,freedomFighterInfo, BGforIndividual, billPreviewInfo,,
+								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionReport, ministryCollectionDetails, freedomFighterInfoForm,freedomFighterCollectionInfoForm,CashAndBGReportsInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, ministryCollectionReportForm, feesCollectionReportHome,,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,salesSummaryHome,monthlySalesSummaryReport,
+								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,certificationSummeryHome,certificationSummeryReport,billPreviewHome,freedomFighterInfo, freedomFighterCollection, CashAndBGReports,securityLedgerInfoReport, BGforIndividual, billPreviewInfo,,
 								 
 								 approveCC,
 								 
@@ -125,18 +125,18 @@
 								 saveAdditonalShurcharge,getNMLedgerByMonthYear,updateNMSurcharge,
 								 getApplianceInfoPlain,getApplianceInfoById,saveNewApplianceInfo,dissconnectRaizer,getRaizerDisconnectionListInfo,reconnectRaizer,
 								 smsHome,smsDefalter,fetchDefaulter,smsAction,deleteCollection,fetchCollection4Delete,ExecuteDeleteCollection,getProcessedTotalSMSCount,getTotalCustomerToSendSMS,
-								 deleteBankGarantieExpireChangeInfo,printBGExpireListWithIn365Days;
+								 deleteBankGarantieExpireChangeInfo,printBGExpireListWithIn365Days,security_bg_notice,preprintedreports;
 								 
 								 
 								 								 
 								 
-					Manager: 	 dashBoard,userDashBoard,dashBoardContent,setUserArea,
+					Manager: 	 dashBoard,userDashBoard,dashBoardContent,setUserArea,saveFFCollection,mixedCustomerInfoHome,
 								 addUser,getCustomerCategoryList,getUserList,getCustomerCategoryList,
 								 getMeterTypeList,getBankList,getBranchList,getAccountList,getAreaList,getTariffList,changeCustomerId, newCustomer,
 								 ownershipChange,updateOwnershipInfo,updateCustomerInformation,editCustomerInfoHome,updateCustomerInfo, changeCustomerIDaction, getDueBillList,
-								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo,getApplianceInfoPlain,getApplianceInfo,
+								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo,areaWiseAdvCollectionHome, getDepositInfo,getApplianceInfoPlain,getApplianceInfo,
 								 								 								
-								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,
+								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,getCollectionLedger,
 								 saveDisconnInfo,saveReconnInfo,
 -								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,
 								 demandNoteDataEntry,saveDemandNote,viewCustomer,
@@ -177,7 +177,7 @@
 								 supplyOffHome,saveSupplyOff,billCreationHome,
 								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
-								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
+								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveMultiMonthCollection,saveAdvancedCollection,checkDueAmount,
 								 getBillingInfo,getGasPrice,currentMonthBillCollection,saveCurrentMonthBillWithCollection,installmentBillingHome,saveInstallments,getBillInstallments,
 								 installmentCollection,saveInstallmentCollection,
@@ -198,11 +198,11 @@
 								 monthlySalesStmtReport,salesReportHome,nonmeterLoadIncreaseHome,nonmeterLoadIncraseInfo,nonmeterReconnectionHome,nonmeterReconnectionInfo,nonmeterConnectionHome,nonmeterConnectionInfo,
 								 nonmeterDisconnectionHome,nonmeterDisconnectionInfo,meterReadingInfoHome,meterReadingInfo,securityDepositInfo,securityDepositHome,defaulterCustomerInfoHome,
 								 maximumLoadExceedInfo,maximumLoadExceedHome,securityDepositRequiredInfo,securityDepositRequiredHome,advancedPaidCustomerInfoHome,advancePaidCustomerInfo,
-								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionDetails, freedomFighterInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, feesCollectionReportHome,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,vatRebateHome,vatRebateInfo,
-								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,securityNoticeHome,securityNoticeInfo,salesSummaryHome,monthlySalesSummaryReport,custListHome,custListInfo,
+								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionReport, ministryCollectionDetails, freedomFighterInfoForm,freedomFighterCollectionInfoForm,CashAndBGReportsInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, ministryCollectionReportForm, feesCollectionReportHome,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,vatRebateHome,vatRebateInfo,
+								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,securityNoticeHome,securityNoticeInfo,salesSummaryHome,monthlySalesSummaryReport,custListHome, balancingReportAction, balancingReport, custListInfo,
 								 certificationSummeryHome,certificationSummeryReport,bankBookjvHome,bankBookjvInfo,securitybankBookjvHome,securitybankBookjvInfo,vatRebatejvHome,vatRebatejvInfo,freedomjvHome,freedomjvInfo,
 								 areaSecurityHome,areaSecurityInfo,salesjvHome,salesjvInfo,purchasejvHome,purchasejvInfo,tdsjvHome,tdsjvInfo,totalSecurityHome,totalSecurityInfo,sgHome,sgInfo,bgHome,bgInfo,avalueHome,avalueInfo,
-								 bapexHome,bapexInfo,distHome,distInfo,dwmbHome,dwmbInfo,gdfHome,gdfInfo,pdfHome,pdfInfo,gtclHome,gtclInfo,,billPreviewHome,freedomFighterInfo, BGforIndividual, billPreviewInfo,,
+								 bapexHome,bapexInfo,distHome,distInfo,dwmbHome,dwmbInfo,gdfHome,gdfInfo,pdfHome,pdfInfo,gtclHome,gtclInfo,,billPreviewHome,freedomFighterInfo, freedomFighterCollection, CashAndBGReports, securityLedgerInfoReport, BGforIndividual, billPreviewInfo,freedomFighterCollection, CashAndBGReports, 
 								 
 								 approveCC,
 								 
@@ -216,18 +216,18 @@
 								 getTariffForDomesticCustomer,bankGarantieManagementHome,deleteBankGarantieExpireChangeInfo,saveGankGarantieExpireExtentionInfo,printBGExpireListWithIn365Days,
 								 
 								 
-								 saveReconcilationInfo,deleteReconcilation,
+								 saveReconcilationInfo,deleteReconcilation,security_bg_notice,preprintedreports,
 								 saveAdditonalShurcharge,getNMLedgerByMonthYear,updateNMSurcharge,deleteCollection,fetchCollection4Delete,ExecuteDeleteCollection;
 								 							 
-			Assistant Manager: 	 dashBoard,userDashBoard,dashBoardContent,setUserArea,
+			Assistant Manager: 	 dashBoard,userDashBoard,dashBoardContent,setUserArea,saveFFCollection,areaWiseAdvCollectionHome,
 								 addUser,getCustomerCategoryList,getUserList,getCustomerCategoryList,
 								 getMeterTypeList,getBankList,getBranchList,getAccountList,getAreaList,getTariffList,changeCustomerId, newCustomer,
 								 ownershipChange,updateOwnershipInfo,updateCustomerInformation,editCustomerInfoHome,updateCustomerInfo, changeCustomerIDaction, getDueBillList,
-								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo,getApplianceInfoPlain,getApplianceInfo,
+								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo, getDepositInfo,getApplianceInfoPlain,getApplianceInfo,
 								 								 								
-								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,
+								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,mixedCustomerInfoHome,
 								 saveDisconnInfo,saveReconnInfo,
--								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,
+-								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,getCollectionLedger,
 								 demandNoteDataEntry,saveDemandNote,viewCustomer,
 								 saveDeposit,editDeposit,deleteDeposit,getDepositLedger,getConnectionLedger,
 								 getSecurityAndOtherDepositList,
@@ -264,7 +264,7 @@
 								 supplyOffHome,saveSupplyOff,billCreationHome,
 								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
-								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
+								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveMultiMonthCollection,saveAdvancedCollection,checkDueAmount,
 								 getBillingInfo,getGasPrice,currentMonthBillCollection,saveCurrentMonthBillWithCollection,installmentBillingHome,saveInstallments,getBillInstallments,
 								 installmentCollection,saveInstallmentCollection,
@@ -286,11 +286,11 @@
 								 monthlySalesStmtReport,salesReportHome,nonmeterLoadIncreaseHome,nonmeterLoadIncraseInfo,nonmeterReconnectionHome,nonmeterReconnectionInfo,nonmeterConnectionHome,nonmeterConnectionInfo,
 								 nonmeterDisconnectionHome,nonmeterDisconnectionInfo,meterReadingInfoHome,meterReadingInfo,securityDepositInfo,securityDepositHome,defaulterCustomerInfoHome,
 								 maximumLoadExceedInfo,maximumLoadExceedHome,securityDepositRequiredInfo,securityDepositRequiredHome,advancedPaidCustomerInfoHome,advancePaidCustomerInfo,
-								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionDetails, freedomFighterInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, feesCollectionReportHome,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,
-								 getDuesListByString,isDefaulterOrNot,marginCalculationInfo,vatRebateHome,vatRebateInfo,custListHome,custListInfo,
+								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionReport, ministryCollectionDetails, freedomFighterInfoForm,freedomFighterCollectionInfoForm,CashAndBGReportsInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, ministryCollectionReportForm, feesCollectionReportHome,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,
+								 getDuesListByString,isDefaulterOrNot,marginCalculationInfo,vatRebateHome,vatRebateInfo,custListHome, balancingReportAction, balancingReport, custListInfo,
 								 saveGasPurchaseInfo,gasPurchaseHome,bankbook,addMoreReconcilationHome,bankBookInfo,bankBookReportHome,variousMarginHome,variousMarginInfo,gasConsumptionHome,gasConsumptionInfo,
 								 reconciliationReport,reconciliationReportHome,isReconiliatedOrNot,getClosingBalance,certificationSummeryHome,certificationSummeryReport,
-								 bankBookjvHome,bankBookjvInfo,securitybankBookjvHome,securitybankBookjvInfo,areaSecurityHome,areaSecurityInfo,salesjvHome,salesjvInfo,,billPreviewHome,freedomFighterInfo, BGforIndividual, billPreviewInfo,,
+								 bankBookjvHome,bankBookjvInfo,securitybankBookjvHome,securitybankBookjvInfo,areaSecurityHome,areaSecurityInfo,salesjvHome,salesjvInfo,,billPreviewHome,freedomFighterInfo,freedomFighterCollection, CashAndBGReports,securityLedgerInfoReport,  BGforIndividual, billPreviewInfo,freedomFighterCollection, CashAndBGReports, securityLedgerInfoReport,
 								 
 								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,securityNoticeHome,securityNoticeInfo,
 								 disconnHome,disconnInfo,yearlyBalanceSheetHome,yearlyBalanceSheetInfo,balanceSheetInfo,balanceSheetHome,securityBankBookHome,securityBankBookInfo,
@@ -302,11 +302,103 @@
 								 
 								 bankDepositWithdrawHome,saveBankTransaction,transactionAuthorization,authorizeTransaction,deleteBankTransaction,getTotalDebitCredit,
 								 journalVoucher,saveCustomerAccountCorrection,saveBankAccountCorrection,
-								 getTariffForDomesticCustomer,
+								 getTariffForDomesticCustomer,security_bg_notice,preprintedreports,
 								 saveReconcilationInfo,deleteReconcilation,bankGarantieManagementHome,deleteBankGarantieExpireChangeInfo,saveGankGarantieExpireExtentionInfo,printBGExpireListWithIn365Days,
 								 saveAdditonalShurcharge,getNMLedgerByMonthYear,updateNMSurcharge,deleteCollection,fetchCollection4Delete,ExecuteDeleteCollection;
+								 
+								 
+					<!-- starts new role for reports made by bindu -->
+					
+					RDD: 	 dashBoard,userDashBoard,dashBoardContent,setUserArea,saveFFCollection,
+								 addUser,getCustomerCategoryList,getUserList,getCustomerCategoryList,
+								 getMeterTypeList,getBankList,getBranchList,getAccountList,getAreaList,getTariffList,changeCustomerId, newCustomer,
+								 ownershipChange,updateOwnershipInfo,updateCustomerInformation,editCustomerInfoHome,updateCustomerInfo, changeCustomerIDaction, getDueBillList,
+								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo, getDepositInfo,getApplianceInfoPlain,getApplianceInfo,
+								 								 								
+								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,areaWiseAdvCollectionHome,
+								 saveDisconnInfo,saveReconnInfo,
+-								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,
+								 demandNoteDataEntry,saveDemandNote,viewCustomer,
+								 saveDeposit,editDeposit,deleteDeposit,getDepositLedger,getConnectionLedger,
+								 getSecurityAndOtherDepositList,mixedCustomerInfoHome,
+								 getDepositDetail,getNewDepositForm,getDepositFormEditMode,securityDepositExpList,
+								 
+								 saveConnectionInfo,getDefaultSurchargePayWithin,
+								 
+								 getCustomerList,getConnectionLedgerGrid, getCustomerLedger,processCustomerLedgerBalance,
+								 
+								 meterInformationHome,saveMeterInfo,deleteMeter,meterEditStatusCheck,
+								 meterDisconnectionHome,saveMeterDisconnInfo,getMeterDisconnInfo,deleteMeterDisconnInfo,
+								 
+								 nonMeterDisconnectionHome,saveNonMeterDisconnInfo,getNonMeterDisconnInfo,deleteNonMeterDisconnInfo,
+								 
+								 meterReconnectionHome,saveMeterReconnInfo,getMeterReconnInfo,deleteMeterReconnInfo,
+								 
+								 nonMeterReconnectionHome,saveNonMeterReconnInfo,getNonMeterReconnInfo,
+								 
+								 loadPressureChangeHome,saveLoadPressureChangeInfo,getLoadPressureChangeInfo,deleteLoadPressureChagneInfo,
+								 hhvVatRebateChangHome,securityAdjustmentHome,saveSecurityAdjustment,getSecurityBalance,
+								 
+								 burnerQntChangeHome,saveBurnerQntChangeInfo,getBurnerQntChangeInfo,deleteBurnerQntChagneInfo,
+								 
+								 meterRentChangeHome,saveMeterRentChangeInfo,getMeterRentChangeInfo,deleteMeterRentChagneInfo,
+								 customerTypeChangeHome,saveCustomerTypeChangeInfo,
+								 
+								 fetchCustomerIdList,
+								 
+								 meterRepairmentHome,saveMeterRepairmentInfo,getRepairInfo,
+								 meterReplacementHome,saveMeterReplacementInfo,getMeterReplacementInfo,deleteMeterReplacementInfo,
+								 
+								 meterReadingHome,saveMeterReading,fetchMeterReading,deleteMeterReading,getMeterReadingInfo,
+								 
+								 supplyOffHome,saveSupplyOff,billCreationHome,
+								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
+								 unlockDatabase,billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
+								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
+								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveMultiMonthCollection,saveAdvancedCollection,checkDueAmount,
+								 getBillingInfo,getGasPrice,currentMonthBillCollection,saveCurrentMonthBillWithCollection,installmentBillingHome,saveInstallments,getBillInstallments,
+								 installmentCollection,saveInstallmentCollection,
+								 
+								 saveBillingInfo,addNewUser,generateBill,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,downloadInstallmentBill,approveBillByBillId,approveAllBill,
+								 holidayHome,getHolidays,getNewHolidayForm,saveHoliday,fetchHolidayList,deleteHoliday,
+								 updateHome,updateHoliday,fetchAreas,fetchDesignations,fetchOrgDivisions,fetchOrgDepartments,
+								 fetchOrgSections,
+								 changePasswordHome,changePassword,resetUserPassword,
+								 validateId,accountInfo,updateAccountInfo,themeSelection,changeTheme,
+								 fetchBankAccountTypes,
+								 fetchReadingEntry,
+								 cacheMonitorHome,getAllKeys,getCacheKeyValue,deleteCacheKey,clearCache,
+								 
+								 surchargeCalHome,saveSurchargeInfo,
+								 
+								 reportHome,areaReport,
+								 
+								 monthlySalesStmtReport,salesReportHome,nonmeterLoadIncreaseHome,nonmeterLoadIncraseInfo,nonmeterReconnectionHome,nonmeterReconnectionInfo,nonmeterConnectionHome,nonmeterConnectionInfo,
+								 nonmeterDisconnectionHome,nonmeterDisconnectionInfo,meterReadingInfoHome,meterReadingInfo,securityDepositInfo,securityDepositHome,defaulterCustomerInfoHome,
+								 maximumLoadExceedInfo,maximumLoadExceedHome,securityDepositRequiredInfo,securityDepositRequiredHome,advancedPaidCustomerInfoHome,advancePaidCustomerInfo,
+								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionReport, ministryCollectionDetails, freedomFighterInfoForm,freedomFighterCollectionInfoForm,CashAndBGReportsInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, ministryCollectionReportForm, feesCollectionReportHome,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,
+								 getDuesListByString,isDefaulterOrNot,marginCalculationInfo,vatRebateHome,vatRebateInfo,custListHome, balancingReportAction, balancingReport, custListInfo,
+								 saveGasPurchaseInfo,gasPurchaseHome,bankbook,addMoreReconcilationHome,bankBookInfo,bankBookReportHome,variousMarginHome,variousMarginInfo,gasConsumptionHome,gasConsumptionInfo,
+								 reconciliationReport,reconciliationReportHome,isReconiliatedOrNot,getClosingBalance,certificationSummeryHome,certificationSummeryReport,
+								 bankBookjvHome,bankBookjvInfo,securitybankBookjvHome,securitybankBookjvInfo,areaSecurityHome,areaSecurityInfo,salesjvHome,salesjvInfo,,billPreviewHome,freedomFighterInfo,freedomFighterCollection, CashAndBGReports,securityLedgerInfoReport,  BGforIndividual, billPreviewInfo,freedomFighterCollection, CashAndBGReports, securityLedgerInfoReport,
+								 
+								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,securityNoticeHome,securityNoticeInfo,
+								 disconnHome,disconnInfo,yearlyBalanceSheetHome,yearlyBalanceSheetInfo,balanceSheetInfo,balanceSheetHome,securityBankBookHome,securityBankBookInfo,
+								 
+								 approveCC,
+								 
+								 collectionStatementReportHome,
+								 clearnessCertificateHome,clearnessCertificateInfo, clearnessCertificateInfoPrePrinted, clearnessUnderCertificateInfo,
+								 
+								 bankDepositWithdrawHome,saveBankTransaction,transactionAuthorization,authorizeTransaction,deleteBankTransaction,getTotalDebitCredit,
+								 journalVoucher,saveCustomerAccountCorrection,saveBankAccountCorrection,
+								 getTariffForDomesticCustomer,security_bg_notice,preprintedreports,
+								 saveReconcilationInfo,deleteReconcilation,bankGarantieManagementHome,deleteBankGarantieExpireChangeInfo,saveGankGarantieExpireExtentionInfo,printBGExpireListWithIn365Days,
+								 saveAdditonalShurcharge,getNMLedgerByMonthYear,updateNMSurcharge,deleteCollection,fetchCollection4Delete,ExecuteDeleteCollection;	
+					
+					<!-- ends new role for reports made by bindu -->		 
 								 				 	   
-				         admin: dashBoard,userDashBoard,setUserArea;
+				         admin: dashBoard,userDashBoard,setUserArea,mixedCustomerInfoHome;
 				    Sales User: dashBoard,userDashBoard, getCustomerInfoAsJson, dashBoardContent,changeCustomerId, newCustomer,fileUploader,validateCustomerId,createNewCustomer, changeCustomerIDaction, setUserArea,
 				    			newlyAppliedCustomerList,getCustomerListSales,getDemandNoteList,getdemandNoteDataEntry,getdemandNoteDataEntryForEdit,updateDemandNote,
 				    			createDemandNote,demandNoteDataEntry,saveDemandNote,downloadDemandNote,demandNoteDownloadHome,
@@ -315,13 +407,15 @@
 					  operator:  dashBoard;  
 						  user:  UserOnly;
 						  	
-					 Bank User: dashBoard,userDashBoard,dashBoardContent,changeCustomerId, newCustomer,fileUploader,validateCustomerId,createNewCustomer, changeCustomerIDaction, 
+					 Bank User: dashBoard,userDashBoard,dashBoardContent,changeCustomerId, newCustomer,fileUploader,validateCustomerId,createNewCustomer, changeCustomerIDaction, getCollectionLedger,
 				    			newlyAppliedCustomerList,getCustomerListSales,getDemandNoteList,getdemandNoteDataEntry,getdemandNoteDataEntryForEdit,updateDemandNote,
 				    			createDemandNote,demandNoteDataEntry,saveDemandNote,downloadDemandNote,demandNoteDownloadHome,
 				    			changePassword,accountInfo,updateAccountInfo,themeSelection,changeTheme,
-				    			changePasswordHome,changePassword,resetUserPassword;  
+				    			changePasswordHome,changePassword,resetUserPassword,mixedCustomerInfoHome;  
 				     
-				     Ipg User : getiPgDetailInfo, getIpgConfirmationPage, finalIpgVerification;	 
+				     Ipg User : getiPgDetailInfo, getIpgConfirmationPage, finalIpgVerification;	
+				     
+				      
 					</param>
 				</interceptor-ref>
 			</interceptor-stack>
@@ -350,6 +444,9 @@
 </global-results>
 
    
+	<action name="CashAndBGReportsInfoForm">
+		<result name="success">/WEB-INF/jsp/reports/CashAndBGReportsInfoForm.jsp</result>
+	</action>
 	
 	<action name="deleteCollection">
 		<result name="success">/WEB-INF/jsp/collection/DeleteCollection.jsp</result>
@@ -399,7 +496,22 @@
 	<action name="login" class="org.jgtdsl.actions.Login">
 		<result name="newLogin">/WEB-INF/jsp/Login.jsp</result>
 		<result type="redirect" name="alreadyLoggedIn">/dashBoard.action</result>	
-	</action>	
+	</action>
+	<!-- 
+	<action name="websiteView" class="org.jgtdsl.actions.Logout">
+		<result name="success">/WEB-INF/jsp/Login.jsp</result>
+	</action>
+	 -->
+	
+	<action name="websiteView" class="org.jgtdsl.actions.WebSite" method="getCustomerBillInfo">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
+	
+	
+		
 	<action name="logout" class="org.jgtdsl.actions.Logout">
 		<result name="success">/WEB-INF/jsp/Login.jsp</result>
 	</action>
@@ -416,6 +528,7 @@
 	</action>
 	<action name="dashBoardContent" class="org.jgtdsl.actions.DashBoardContent">
 		<result name="super-admin">/WEB-INF/jsp/dashboard/Content-SuperAdmin.jsp</result>
+		<result name="rdd">/WEB-INF/jsp/dashboard/Content-SuperAdmin.jsp</result>
 		<result name="sales-user">/WEB-INF/jsp/dashboard/Content-SalesUser.jsp</result>
 		<result name="assistant-manager">/WEB-INF/jsp/dashboard/Content-SuperAdmin.jsp</result>
 		<result name="manager">/WEB-INF/jsp/dashboard/Content-SuperAdmin.jsp</result>
@@ -476,6 +589,11 @@
 	<action name="getMeterInfo" class="org.jgtdsl.actions.Customer" method="getMeterInfo">
 		<result name="success">/WEB-INF/jsp/customer/view/Meter.jsp</result>
 	</action>
+	
+	<action name="getDepositInfo" class="org.jgtdsl.actions.Customer" method="getDepositInfo">
+		<result name="success">/WEB-INF/jsp/customer/view/DepositView.jsp</result>
+	</action>
+	
 	<action name="getApplianceInfo" class="org.jgtdsl.actions.Customer" method="getApplianceInfo">
 		<result name="success">/WEB-INF/jsp/connection/Appliance.jsp</result>
 	</action>
@@ -531,6 +649,14 @@
 		<result name="ministry">/WEB-INF/jsp/billing/BillCreationMinistry.jsp</result>
 		<result name="FFCollection">/WEB-INF/jsp/billing/FFCollection.jsp</result>
 	</action>
+	
+	<action name="saveFFCollection" class="org.jgtdsl.actions.Collection" method="saveFFCollection">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
+	
 	<action name="processBill" class="org.jgtdsl.actions.Billing" method="processBill">
 		<result type="stream">
 				<param name="contentType">json</param>
@@ -631,7 +757,24 @@
 	</action>
 	
 	<action name="collectionReportHome">
-		<result name="success">/WEB-INF/jsp/reports/CollectionReportHome.jsp</result>
+		<result name="success">/WEB-INF/jsp/reports/CollectionReport.jsp</result>
+	</action>	
+	
+		<action name="areaWiseAdvCollectionHome">
+		<result name="success">/WEB-INF/jsp/reports/AdvCollectionReportHome.jsp</result>
+	</action>
+	
+	<!-- pre printed reports @hnj -->
+	
+	<action name="preprintedreports" class="org.jgtdsl.reports.NoticeForSecurityAndBG">
+		 <result type="stream">
+	    <param name="contentType">application/pdf</param>
+	    <param name="inputName">inputStream</param>
+	  </result> 
+	</action>
+	
+	<action name="security_bg_notice">
+		<result name="success">/WEB-INF/jsp/reports/security_bg_notice.jsp</result>
 	</action>	
 	
 	<action name="ministryCollectionDetailsView">
@@ -648,6 +791,10 @@
 	
 	<action name="codelessCollectionReportForm">
 		<result name="success">/WEB-INF/jsp/reports/CodelessCollectionForm.jsp</result>
+	</action>
+	
+	<action name="ministryCollectionReportForm">
+		<result name="success">/WEB-INF/jsp/reports/MinistryCollectionReportForm.jsp</result>
 	</action>
 	
 	<action name="addMoreReconcilationHome">
@@ -705,6 +852,14 @@
     </action>
     <action name="custListHome">
        <result name="success">/WEB-INF/jsp/reports/CustomerListReport.jsp</result>
+    </action>
+    
+    <action name="balancingReportAction">
+       <result name="success">/WEB-INF/jsp/reports/balancingReportHome.jsp</result>
+    </action>
+    
+    <action name="mixedCustomerInfoHome">
+       <result name="success">/WEB-INF/jsp/reports/mixedCustomerInfoHome.jsp</result>
     </action>
     
      <action name="certificationSummeryHome">
@@ -787,12 +942,17 @@
 		</result>
 	</action>
 
+	<action name="freedomFighterCollectionInfoForm">
+		<result name="success">/WEB-INF/jsp/reports/FreedomFighterCollectionInfoForm.jsp</result>
+	</action>
 	<action name="billCollectionHome">
 		<result name="success">/WEB-INF/jsp/collection/BillCollection.jsp</result>
 	</action>
+	
 	<action name="advancedCollectionHome">
-		<result name="success">/WEB-INF/jsp/collection/AdvancedCollection.jsp</result>
+		<result name="success">/WEB-INF/jsp/collection/AdvCollectionReportHome.jsp</result>
 	</action>
+	
 	<action name="codelessCollectionHome">
 		<result name="success">/WEB-INF/jsp/collection/CodelessCollection.jsp</result>
 	</action>
@@ -835,6 +995,14 @@
 				<param name="inputName">inputStream</param>
 		</result>
 	</action>
+	
+	<action name="saveMinistryBillCollection" class="org.jgtdsl.actions.Collection" method="saveMinistryBillCollection">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
+	
 	<action name="saveBillCollectionAdj" class="org.jgtdsl.actions.AdjustmentCollection" method="saveBillCollection">
 		<result type="stream">
 				<param name="contentType">json</param>
@@ -1273,6 +1441,12 @@
 			</result>
 	</action>
 	
+	<action name="getCollectionLedger" class="org.jgtdsl.actions.Customer" method="getCollectionLedger">
+			<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+			</result>
+	</action>
 	
 	<action name="saveConnectionInfo" class="org.jgtdsl.actions.Customer" method="saveConnectionInfo">
 		<result type="stream">

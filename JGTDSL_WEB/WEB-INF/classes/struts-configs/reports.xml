@@ -179,6 +179,21 @@
 		</result>	
 	</action>
 	
+	<action name="AdvCollecctionReport"  class="org.jgtdsl.reports.AdvancedCollectionReport">
+		<result type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+		</result>	
+	</action>
+	
+	
+	<action name="ministryCollectionReport"  class="org.jgtdsl.reports.MinistryCollectionReport">
+		<result type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+		</result>	
+	</action>
+	
 	<action name="maximumLoadExceedInfo"  class="org.jgtdsl.reports.MaximumLoadExceedReport">
 		<result type="stream">
 				<param name="contentType">application/pdf</param>
@@ -368,6 +383,23 @@
 	  	</result> 
 	 </action>
 	 
+	 	 <action name="MixedCustListInfo"  class="org.jgtdsl.reports.MixedCustomerInfoReport">
+	  	<result type="stream">
+	    	<param name="contentType">application/pdf</param>
+	    	<param name="inputName">inputStream</param>
+	  	</result> 
+	 </action>
+	 
+	 
+	 
+	 
+	  <action name="balancingReport"  class="org.jgtdsl.reports.BalancingReport">
+	  	<result type="stream">
+	    	<param name="contentType">application/pdf</param>
+	    	<param name="inputName">inputStream</param>
+	  	</result> 
+	 </action>
+	 
   <action name="certificationSummeryReport"  class="org.jgtdsl.reports.CertificationSummaryReport">
 	  	<result type="stream">
 	    	<param name="contentType">application/pdf</param>
@@ -530,6 +562,27 @@
 				<param name="contentType">application/pdf</param>
 				<param name="inputName">inputStream</param>
 		</result>	
+	</action>
+	
+	<action name="freedomFighterCollection"  class="org.jgtdsl.reports.FreedomFighterCollection">
+		<result type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+		</result>	
+	</action>
+	
+	<action name="CashAndBGReports"  class="org.jgtdsl.reports.CashAndBGReports">
+		<result type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+		</result>	
+	</action>
+	
+	<action name="securityLedgerInfoReport" class="org.jgtdsl.actions.SecurityLedgerInfoReportIndividual" >
+		<result type="stream">
+				<param name="contentType">application/pdf</param>
+				<param name="inputName">inputStream</param>
+		</result>
 	</action>
 	
 <!-- [End] Security Deposit Report -->
