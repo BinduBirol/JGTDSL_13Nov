@@ -204,53 +204,12 @@ public class CustomerService {
 
 	}
 	
-
-/*	
-	public static ResponseDTO updateZoneArea(String zone_id, String zone_name,String area_id) {
-		ResponseDTO response = new ResponseDTO();
-		TransactionManager transactionManager = new TransactionManager();
-		String sql="update MST_ZONE set ZONE_ID=?,ZONE_NAME=? where AREA_ID=?";
-		Connection conn = transactionManager.getConnection();
-		
-		PreparedStatement stmt = null;		
-		
-
-		try {
-			stmt= conn.prepareStatement(sql);
-			stmt.setString(1, zone_id);
-			stmt.setString(2, zone_name);
-			stmt.setString(3, area_id);
-			
-			stmt.execute();
-			transactionManager.commit();
-
-			response.setMessasge("Successfully Updated zone Information.");
-			response.setResponse(true);
-
-		} catch (Exception e) {
-			response.setMessasge(e.getMessage());
-			response.setResponse(false);
-			e.printStackTrace();
-			try {
-				transactionManager.rollback();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} finally {
-			try {
-				stmt.close();
-				//plain_stmt.close();
-				transactionManager.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			stmt = null;			
-			conn = null;
-		}
-
-		return response;
-
-	}*/
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -296,8 +255,6 @@ public class CustomerService {
 
 	}
 
-	
-	
 	public String deleteCustomerCategory(String categoryId) {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObject = null;
@@ -567,7 +524,6 @@ public class CustomerService {
 				personalInfo.setTin(r.getString("TIN_NO"));
 				personalInfo.setMinistry_id(r.getString("MINISTRY_ID"));
 				personalInfo.setMinistry_name(r.getString("MINISTRY_NAME"));
-				personalInfo.setBulk_sataus(r.getString("IS_BULKED"));
 
 				if (r.getString("FREEDOM_FIGHTER") == null) {
 					personalInfo.setFreedom_fighter("N");
@@ -1351,7 +1307,7 @@ public class CustomerService {
 		Connection conn = transactionManager.getConnection();
 		String personalInfoSql = " Update CUSTOMER_PERSONAL_INFO Set FULL_NAME=?, FATHER_NAME=?, MOTHER_NAME=?, "
 				+ " GENDER=?, EMAIL=?, PHONE=?, MOBILE=?, FAX=?, NATIONAL_ID=?, PASSPORT_NO=?, LICENSE_NUMBER=?,VAT_REG_NO=?,FREEDOM_FIGHTER=? Where CUSTOMER_ID=?";
-		String personalInfoSqlforMinistry = "update CUSTOMER_CONNECTION set MINISTRY_ID=?, vat_rebate=?,CONNECTION_DATE=to_date(?,'dd-MM-YYYY'),STATUS=?,IS_BULKED=? Where CUSTOMER_ID=?";
+		String personalInfoSqlforMinistry = "update CUSTOMER_CONNECTION set MINISTRY_ID=?, vat_rebate=?,CONNECTION_DATE=to_date(?,'dd-MM-YYYY'),STATUS=? Where CUSTOMER_ID=?";
 		String addressInfoSql = " Update CUSTOMER_ADDRESS Set DIVISION=?,DISTRICT=?,UPAZILA=?,ROAD_HOUSE_NO=?,POST_OFFICE=?,POST_CODE=?,ADDRESS_LINE1=?,ADDRESS_LINE2=?,ZONE_ID=? Where Customer_Id=?";
 
 		String make_mixed = " update CUSTOMER_CONNECTION set PARENT_CONNECTION= ? where CUSTOMER_ID=?  ";
@@ -1360,7 +1316,7 @@ public class CustomerService {
 
 		PreparedStatement stmt = null;
 		Statement plain_stmt =null;
-		ResultSet r = null; 
+		
 
 		try {
 			if(!address.getZone_id().isEmpty()){
@@ -1368,6 +1324,8 @@ public class CustomerService {
 				//update zone
 				plain_stmt.execute(update_zone);
 			}
+			
+			
 
 			stmt = conn.prepareStatement(personalInfoSql);
 			stmt.setString(1, personalInfo.getFull_name());
@@ -1382,7 +1340,7 @@ public class CustomerService {
 			stmt.setString(10, personalInfo.getPassport_no());
 			stmt.setString(11, personalInfo.getLicense_number());
 			stmt.setString(12, personalInfo.getVat_reg_no());
-			stmt.setString(13, personalInfo.getFreedom_fighter());		
+			stmt.setString(13, personalInfo.getFreedom_fighter());
 			stmt.setString(14, customer.getCustomer_id());
 			stmt.execute();
 
@@ -1391,12 +1349,7 @@ public class CustomerService {
 			stmt.setString(2, personalInfo.getVat_rebate());
 			stmt.setString(3, customer.getConnectionInfo().getConnection_date());
 			stmt.setString(4, customer.getConnectionInfo().getStatus_str());
-			
-			if(personalInfo.getBulk_sataus().equalsIgnoreCase("N"))stmt.setString(5, null);
-			if(personalInfo.getBulk_sataus().equalsIgnoreCase("Y"))stmt.setString(5, personalInfo.getBulk_sataus());
-			
-			
-			stmt.setString(6, customer.getCustomer_id());
+			stmt.setString(5, customer.getCustomer_id());
 			
 			
 			stmt.execute();

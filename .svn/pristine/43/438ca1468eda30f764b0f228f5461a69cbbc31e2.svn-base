@@ -155,41 +155,25 @@ min-height: 33px !important;
 						  	</div>				  			  			
 						 </div>
 						 
-						 <s:if test="#session.role=='Super Admin'">
-							 <div class="row-fluid">
-							 <div class="span6 extra">
-				                    <label style="width: 30%">Connection Status</label>	
-				                    <select name="customer.connectionInfo.status_str" id="statusList"  style="width: 65%;">		
-				                     <option selected="selected">Status</option>	                        
-				                        <s:iterator value="%{#application.STATUS_STR}" id="">			                       
-				                            <option value="<s:property value="status_str" />" >
-				                                <s:property value="status_name" />
-				                            </option>
-				                        </s:iterator>
-				                    </select>
-							  	</div>		
-							 
-							 					  	
-							  <div class="span6 extra">
-									<label style="width: 30%">Initial Connection Date </label>	
-									<input type="text" style="width: 65%"  name="customer.connectionInfo.connection_date" id=co_date />																	
-							  	</div>				  	 			
-							 </div>
-							 
-							 <div class="row-fluid">
-							 	<div class="span6 extra">
-							 	<label style="width: 30%">Bulk Status </label>	
-							 	<input type="radio" id="radio_Y" name="personal.bulk_sataus" value="Y">Yes
-								<input type="radio" id="radio_undefined" name="personal.bulk_sataus" value="N"> No<br>
-								</div>
-							 </div>
-							 
-							 
-							 
-							 
-							 
-							 
-							</s:if> 
+						 <div class="row-fluid">
+						 <div class="span6 extra">
+			                    <label style="width: 30%">Connection Satus</label>	
+			                    <select name="customer.connectionInfo.status_str" id="statusList"  style="width: 65%;">		
+			                     <option selected="selected">Status</option>	                        
+			                        <s:iterator value="%{#application.STATUS_STR}" id="">			                       
+			                            <option value="<s:property value="status_str" />" >
+			                                <s:property value="status_name" />
+			                            </option>
+			                        </s:iterator>
+			                    </select>
+						  	</div>		
+						 
+						 					  	
+						  <div class="span6 extra">
+								<label style="width: 30%">Connection Date </label>	
+								<input type="text" style="width: 65%"  name="customer.connectionInfo.connection_date" id=co_date />																	
+						  	</div>				  	 			
+						 </div>
 						 						 
 						<hr>
 						<div class="row-fluid">

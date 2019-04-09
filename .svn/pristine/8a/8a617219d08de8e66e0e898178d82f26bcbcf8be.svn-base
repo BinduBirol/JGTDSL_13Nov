@@ -69,8 +69,7 @@ function setCustomerInfos(data){
 		$("#email").val(personal.email);
 		$("#freedom_fighter").val(personal.freedom_fighter);
 		$("#ministry_id").val(personal.ministry_id);
-		$("#co_date").val(connection.connection_date);		
-		$("#radio_"+personal.bulk_sataus).attr('checked',true);
+		$("#co_date").val(connection.connection_date);
 		//$("#ministry_name").val(personal.ministry_name);
 		
 		$("#customer_category_name").val(data.customer_category_name);
