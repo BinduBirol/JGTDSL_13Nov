@@ -31,48 +31,53 @@ input[type="radio"],input[type="checkbox"] {
 				</div>
 				<div class="w-box-content" style="padding: 10px;" id="content_div">
 				
-     				<form id="billProcessForm" name="billProcessForm" action="preprintedreports.action" style="margin-bottom: 1px;">
+     				<form id="billProcessForm" name="billProcessForm" action="due_bill_notice.action" style="margin-bottom: 1px;">
+												
 						<div class="row-fluid">
-							<div class="span12">
-								<div class="alert alert-info">
-									<table width="100%" align="center">
-										<tr>
-											<td width="100%" align="left" style="font-size: 12px;font-weight: bold;">
-												<input checked="checked" type="radio" value="securityandBG" id="securityandBG" name="report_for" onclick="checkType(this.id)" /> Security-BG Notice  &nbsp;&nbsp;&nbsp;
-											</td>											
-										</tr>
-									</table>
-                                </div>
-                                
-							</div>
-						</div>
-						
-						<div class="row-fluid">
-							<div class="span6">
-								<label style="width: 40%">Customer ID</label>
-								<input type="text" name="customer_id" id="customer_id" maxlength="12" style="border: 1px solid #add9e4;width: 40%;;font-weight: bold;color: blue;" />
-							</div>
 							
-							<div class="span6">
-								<label style="width: 40%">Certification Number</label>
-								<input type="text" name="certification_id" id="certification_id" style="border: 1px solid #add9e4;width: 40%;;font-weight: bold;color: blue;" />
-							</div>
+								<jsp:include page="../common/CustomerInfo.jsp" />											
+												
 						</div>
-					
+						<br/>
+						<input type="hidden" name="customer_id" id="customer_id"/>						
+						
+						
+						<div class="row-fluid">							
+							<div class="span6">									    
+								<label style="width: 40%">To Month-Year<m class='man'/></label>
+								<select name="month_to" id="to_billing_month" style="width: 56%;margin-left: 0px;">
+							       	<option value="">Select Month</option>           
+							        <s:iterator  value="%{#application.MONTHS}">   
+							   			<option value="<s:property value='id'/>"><s:property value="label"/></option>
+									</s:iterator>
+						       </select>								      
+							</div>
+							<div class="span6">
+								
+								<select name="year_to" id="to_billing_year" style="width: 56%;">
+							       	<option value="">Year</option>
+							       	<s:iterator  value="%{#application.YEARS}" id="year">
+							            <option value="<s:property/>"><s:property/></option>
+									</s:iterator>
+						       </select>     
+							</div>  
+						</div>
+						<br/>
 						<div class="row-fluid">							
 							<div class="span6">									    
 								<label style="width: 40%">Issue Date</label>
-								<input type="text" style="width: 40%"  name="issue_date" id="issue_date" />
+								<input type="text" required style="width: 40%"  name="issue_date" id="issue_date" />
 							</div>
+							
+						</div>
+						
+						<div class="row-fluid">							
+							
 							<div class="span6">									    
 								<label style="width: 40%">Due Date</label>
-								<input type="text" style="width: 40%"  name="due_date" id="due_date" />
+								<input type="text" required style="width: 40%"  name="due_date" id="due_date" />
 							</div>
 						</div>
-						<br>
-						<br>
-						
-						
 						
 						<div class="formSep" style="padding-top: 2px;padding-bottom: 2px;">
 							<div id="aDiv" style="height: 0px;"></div>
@@ -100,6 +105,19 @@ input[type="radio"],input[type="checkbox"] {
   
 <p style="clear: both;margin-top: 5px;"></p>
 <script type="text/javascript">
+
+$("#from_billing_month").val(getCurrentMonth());
+$("#from_billing_year").val(getCurrentYear());
+$("#to_billing_month").val(getCurrentMonth());
+$("#to_billing_year").val(getCurrentYear());
+
+$("#comm_customer_id").unbind();
+$("#comm_customer_id").autocomplete($.extend(true, {}, acMCustomerOption,{
+		serviceUrl: sBox.CUSTOMER_LIST,
+    	onSelect:function (){getCustomerInfo("comm",$('#comm_customer_id').val()), $('#customer_id').val($('#comm_customer_id').val());
+		}
+}));
+
 Calendar.setup({
     inputField : "issue_date",
     trigger    : "issue_date",
@@ -119,4 +137,5 @@ Calendar.setup({
     dateFormat : "%d-%m-%Y",
 	showTime : true
 });
+
 </script>
