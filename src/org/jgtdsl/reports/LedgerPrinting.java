@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
@@ -74,6 +75,7 @@ public class LedgerPrinting extends BaseAction implements ServletContextAware {
 	LedgerService ls= new LedgerService();
 	CustomerDTO customerInfo = new CustomerDTO();
 	CustomerService cs= new CustomerService();
+	static DecimalFormat taka_format = new DecimalFormat("#,##,##,##,##,##0.00");
 
 	public String downloadLedger() throws Exception {
 		Font font1 = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
@@ -547,7 +549,7 @@ public class LedgerPrinting extends BaseAction implements ServletContextAware {
 				pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				mainledger.addCell(pcell);
 				
-				pcell=new PdfPCell(new Paragraph(String.valueOf(x.getBalance_amount()),font3));
+				pcell=new PdfPCell(new Paragraph(taka_format.format(x.getBalance_amount()),font3));
 				pcell.setPadding(3);
 				pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 				mainledger.addCell(pcell);

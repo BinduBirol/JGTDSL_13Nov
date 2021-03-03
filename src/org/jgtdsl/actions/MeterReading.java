@@ -90,6 +90,12 @@ public class MeterReading extends BaseAction
         return null; 
 	}
 	
+	public String getExceptionReading()
+	{		
+		MeterReadingService mrs=new MeterReadingService();
+		setJsonResponse(mrs.getExceptionReading(customer_id,billing_month,billing_year).get(0).toString());
+        return null; 
+	}	
 	
 	//Use for next previous reading entry......
 	public String fetchReadingEntry(){

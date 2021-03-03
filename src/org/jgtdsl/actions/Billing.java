@@ -28,7 +28,7 @@ public class Billing extends BaseAction{
 	
 	String isDedaulterOrNot;
 	public String billCreationHome()
-	{
+		{
 		if(bill_parameter.getIsMetered_str().equalsIgnoreCase("installment"))
 			return "installment";
 		else if(bill_parameter.getIsMetered_str().equalsIgnoreCase("ministry"))
@@ -37,11 +37,23 @@ public class Billing extends BaseAction{
 			return "FFCollection";
 		else if(Integer.parseInt(bill_parameter.getIsMetered_str())==MeteredStatus.METERED.getId())
 			return "metered";
+		else if(Integer.parseInt(bill_parameter.getIsMetered_str())==MeteredStatus.S_METERED.getId())
+			return "metered_LfargeHolcim";
 		else if(Integer.parseInt(bill_parameter.getIsMetered_str())==MeteredStatus.NONMETERED.getId())
 			return "nonmetered";
 		else
 			return "error";
 	}
+	public String processBillException(){
+		
+		BillingService billingService=new BillingService();
+		UserDTO loggedInUser=(UserDTO)session.get("user");
+		bill_parameter.setProcessed_by(loggedInUser.getUserId());
+		ResponseDTO response=billingService.processBillException(bill_parameter);
+		setJsonResponse(response);
+		return null;
+	}
+	
 	public String processBill(){
 		
 		BillingService billingService=new BillingService();
@@ -51,6 +63,7 @@ public class Billing extends BaseAction{
 		setJsonResponse(response);
 		return null;
 	}
+	
 	public String showBillEvents(){	
 		BillingService billingService=new BillingService();
 		eventList=billingService.getNonMeterEventList(bill_id);		

@@ -3,7 +3,8 @@ package org.jgtdsl.enums;
 public enum  MeteredStatus {
 
 	NONMETERED(0,"Non-Metered"),
-	METERED(1,"Metered");
+	METERED(1,"Metered"),
+	S_METERED(2,"Metered");
     
 
     private String label;

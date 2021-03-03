@@ -4,7 +4,8 @@ jQuery("#dues_bill_grid").jqGrid({
 	url: jsEnum.GRID_RECORED_FETCHER+'?service=org.jgtdsl.models.BillingService&method=getMeteredCustomerDueBillList',
    	jsonReader: {
             repeatitems: false,
-            id: "bill_id"
+            //id: "bill_id"
+            id: "bill_month"
 	},
     colNames: ['Bill_id','Month','Year','Bill Amount','Due Date','Days','Surcharge','New Payable Amount'],
     colModel: [{    name: 'bill_id',
@@ -12,7 +13,7 @@ jQuery("#dues_bill_grid").jqGrid({
 		            width:25,
 		            align:'center',
 		            sorttype: 'string',
-		            search: true,		            
+	                search: true
 		    	},
                    {
 	                name: 'bill_month',
@@ -39,8 +40,8 @@ jQuery("#dues_bill_grid").jqGrid({
 	                sorttype: "string",
 	                align:'center',
 	                formatter: function (cellValue, option,rowObject) {
-        				return '<input type="text" id="billed_amount_'+rowObject.bill_id+'" value="'+rowObject.billed_amount+'" disabled="disabled" style="width:100px;height:10px;text-align:right;"/>'+
-        					  '<input type="hidden" id="bill_id_'+rowObject.bill_id+'" value="'+rowObject.bill_id+'" />';
+        				return '<input type="text" class="billed_amount_'+rowObject.bill_month+'" id="billed_amount_'+rowObject.bill_id+'" value="'+rowObject.billed_amount+'" disabled="disabled" style="width:100px;height:10px;text-align:right;"/>'+
+        					  '<input type="hidden" class="bill_id_'+rowObject.bill_month+'" id="bill_id_'+rowObject.bill_id+'" value="'+rowObject.bill_id+'" />';
     				}
             	},
             	{
@@ -58,7 +59,7 @@ jQuery("#dues_bill_grid").jqGrid({
 	                width:30,
 	                align:'center',
 	                formatter: function (cellValue, option,rowObject) {
-        				return '<input type="text" id="days_'+rowObject.bill_id+'" disabled="disabled" style="width:35px;height:10px;text-align:right;"/>';
+        				return '<input type="text" class="days_'+rowObject.bill_month+'" id="days_'+rowObject.bill_id+'" disabled="disabled" style="width:35px;height:10px;text-align:right;"/>';
     				}
             	},
             	{
@@ -68,7 +69,7 @@ jQuery("#dues_bill_grid").jqGrid({
 	                width:40,
 	                align:'right',
 	                formatter: function (cellValue, option,rowObject) {
-        				return '<input type="text" id="surcharge_amount_'+rowObject.bill_id+'" disabled="disabled" style="width:70px;height:10px;text-align:right;"/>';
+        				return '<input type="text" class="surcharge_amount_'+rowObject.bill_month+'" id="surcharge_amount_'+rowObject.bill_id+'" disabled="disabled" style="width:70px;height:10px;text-align:right;"/>';
     				}
 	                
             	},
@@ -79,7 +80,7 @@ jQuery("#dues_bill_grid").jqGrid({
                     width:60,
                     align:'right',
                     formatter: function (cellValue, option,rowObject) {
-        				return '<input type="text" id="new_amount_'+rowObject.bill_id+'" disabled="disabled" style="width:100px;height:10px;text-align:right;"/>';
+        				return '<input type="text" class="new_amount_'+rowObject.bill_month+'" id="new_amount_'+rowObject.bill_id+'" disabled="disabled" style="width:100px;height:10px;text-align:right;"/>';
     				}
                     
             	}
@@ -107,26 +108,36 @@ jQuery("#dues_bill_grid").jqGrid('navGrid','#dues_bill_grid_pager',$.extend({},f
 gridColumnHeaderAlignment("left","dues_bill_grid",["full_name","remarks"]);
 
 function calculateSurcharge(){
+	
+	
 var rows = $("#dues_bill_grid").getDataIDs();
+
 
 	for(a=0;a<rows.length;a++)
 	 {
-	    row=$("#dues_bill_grid").getRowData(rows[a]); 
-	    var billed_amount=$("#billed_amount_"+row.bill_id).val();	    
-	    $("#days_"+row.bill_id).val(dayDifference(row.due_date,$("#pay_date").val()));
+		
+		row=$("#dues_bill_grid").getRowData(rows[a]); 
+		
+		//var billed_amount=$("#billed_amount_"+row.bill_id).val();	
+		var billed_amount=$(".billed_amount_"+row.bill_month).val();	
 	    
-	    // 9% surcharge for this customer, confirmed from nobigonj 
+	    $(".days_"+row.bill_month).val(dayDifference(row.due_date,$("#pay_date").val()));
+	    
+	    // 9% surcharge for this customer, confirmed from nobigonj ,,,
 	    // @sujon
 	    var surcharge=0;
-	    if($("#customer_id").val()=='231300001'||$("#customer_id").val()=='161300005'){
-	    	 surcharge= Math.round((billed_amount*9*$("#days_"+row.bill_id).val())/(100*365));
+	    if($("#customer_id").val()=='231300001'){
+	    	 surcharge= Math.round((billed_amount*9*$(".days_"+row.bill_month).val())/(100*365));
+	    }else if($("#customer_id").val()=='161300005'){
+	    	surcharge= Math.round((billed_amount*8*$(".days_"+row.bill_month).val())/(100*365));
+	    	
 	    }else{
-	    	 surcharge= Math.round((billed_amount*12*$("#days_"+row.bill_id).val())/(100*365));
+	    	 surcharge= Math.round((billed_amount*12*$(".days_"+row.bill_month).val())/(100*365));
 	    }
 	   // alert($("#customer_id").val());
-	    $("#surcharge_amount_"+row.bill_id).val(surcharge);	
+	    $(".surcharge_amount_"+row.bill_month).val(surcharge);	
 		var new_total_amount= Math.round(parseFloat(surcharge)+parseFloat(billed_amount));
-		$("#new_amount_"+row.bill_id).val(new_total_amount.toFixed(2));
+		$(".new_amount_"+row.bill_month).val(new_total_amount.toFixed(2));
 	
 	}
 	jQuery("#dues_bill_grid").jqGrid('footerData','set', {bill_month: 'Total:', billed_amount:"",surcharge: "",new_payable_amount:""});
@@ -140,6 +151,8 @@ function handleSelectedRow() {
 	$("#jqg_dues_bill_grid_"+row.bill_id).prop('checked', false);
 	return;
 }*/
+	
+	
 
 var totalBill=0;
 var totalSurcharge=0;
@@ -150,11 +163,19 @@ var rows = jQuery("#dues_bill_grid").getDataIDs();
 	for(a=0;a<rows.length;a++)
 	 {	
 	    row=jQuery("#dues_bill_grid").getRowData(rows[a]);
-	    if($("#jqg_dues_bill_grid_"+row.bill_id).prop('checked')==true) 
-	    { 
-			totalBill=parseFloat(totalBill)+parseFloat($("#billed_amount_"+row.bill_id).val());
-			totalSurcharge=parseFloat(totalSurcharge)+parseFloat($("#surcharge_amount_"+row.bill_id).val());
-			totalNewBill=parseFloat(totalNewBill)+parseFloat($("#new_amount_"+row.bill_id).val());
+	  
+	    
+	    if($("#jqg_dues_bill_grid_"+row.bill_month).prop('checked')==true) 
+	    {
+	    	
+	    	//totalBill=parseFloat(totalBill)+parseFloat($("#billed_amount_"+row.bill_id).val());
+			//totalSurcharge=parseFloat(totalSurcharge)+parseFloat($("#surcharge_amount_"+row.bill_id).val());
+			//totalNewBill=parseFloat(totalNewBill)+parseFloat($("#new_amount_"+row.bill_id).val());
+			
+	    	totalBill=parseFloat(totalBill)+parseFloat($(".billed_amount_"+row.bill_month).val());
+			totalSurcharge=parseFloat(totalSurcharge)+parseFloat($(".surcharge_amount_"+row.bill_month).val());
+			totalNewBill=parseFloat(totalNewBill)+parseFloat($(".new_amount_"+row.bill_month).val());
+			
 		    saveButtonFlag=true;
 	    }
 	}
@@ -205,15 +226,21 @@ function saveAndDownloadBill(){
 	var rows = jQuery("#dues_bill_grid").getDataIDs();
     var billInfo="";
     var bill_ids="";
-    
+   
 	for(var a=0;a<rows.length;a++)
 	 {	
+		 
 	    row=jQuery("#dues_bill_grid").getRowData(rows[a]);
-	    if($("#jqg_dues_bill_grid_"+row.bill_id).prop('checked')==true) 
-	    { 
-	    	billInfo+=$("#customer_id").val()+"#"+$("#pay_date").val()+"#"+$("#surcharge_rate").val()+"#"+$("#bill_id_"+row.bill_id).val()+"#"+$("#surcharge_amount_"+row.bill_id).val()+"@";
-	    	bill_ids+="'"+$("#bill_id_"+row.bill_id).val()+"'"+",";	    	
 	    
+	    if($("#jqg_dues_bill_grid_"+row.bill_month).prop('checked')==true) 
+	    { 
+	    	//billInfo+=$("#customer_id").val()+"#"+$("#pay_date").val()+"#"+$("#surcharge_rate").val()+"#"+$("#bill_id_"+row.bill_id).val()+"#"+$("#surcharge_amount_"+row.bill_id).val()+"@";
+	    	//bill_ids+="'"+$("#bill_id_"+row.bill_id).val()+"'"+",";	    	
+	    	
+	    	billInfo+=$("#customer_id").val()+"#"+$("#pay_date").val()+"#"+$("#surcharge_rate").val()+"#"+$(".bill_id_"+row.bill_month).val()+"#"+$(".surcharge_amount_"+row.bill_month).val()+"@";
+	    	
+	    	bill_ids+="'"+$(".bill_id_"+row.bill_month).val()+"'"+",";	 	    	
+	    	
 	    }
 	}
 	
@@ -249,6 +276,9 @@ function saveAndDownloadBill(){
 		bill_ids=bill_ids.substring(0, bill_ids.length-1);
 	}
 	disableButton("btn_save");
+	
+
+	
 	$.ajax({
 		    url: 'saveSurchargeInfo.action',
 		    type: 'POST',

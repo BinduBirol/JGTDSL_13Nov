@@ -112,7 +112,7 @@
 <div class="row-fluid"> 
 	<div class="span6">
        <label class="mr_lable">Current Reading</label>
-       <input type="text" name="reading.curr_reading" id="curr_reading"  class="mr_text" onkeyUp="calculateDifference()" disabled="disabled" style="width: 59%;"/>
+       <input type="text" name="reading.curr_reading" id="curr_reading"  class="mr_text" onkeypress="return onlyNumberKey(event)" onkeyUp="calculateDifference()" disabled="disabled" style="width: 59%;"/>
    </div>   
    <div class="span6">
        <label class="mr_lable">Disconn. Date</label>

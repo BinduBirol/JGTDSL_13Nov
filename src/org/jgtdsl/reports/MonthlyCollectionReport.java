@@ -30,6 +30,7 @@ import org.jgtdsl.dto.UserDTO;
 import org.jgtdsl.enums.Area;
 import org.jgtdsl.enums.DisconnType;
 import org.jgtdsl.enums.Month;
+import org.jgtdsl.models.AreaService;
 import org.jgtdsl.reports.masterData.CustomerCategory;
 import org.jgtdsl.reports.*;
 import org.jgtdsl.utils.Utils;
@@ -162,7 +163,7 @@ public class MonthlyCollectionReport extends BaseAction {
 			}
 			else	if(report_for.equals("category_type_wise_f_all_area"))
 			{
-				Chunk chunk1 = new Chunk("Combined Report for: ",font2);
+				Chunk chunk1 = new Chunk("Combined Report for all area ",font2);
 				//Chunk chunk2 = new Chunk(String.valueOf(Area.values()[Integer.valueOf(loggedInUser.getArea_id())-1]),font3);
 				Paragraph p = new Paragraph(); 
 				p.add(chunk1);
@@ -172,7 +173,24 @@ public class MonthlyCollectionReport extends BaseAction {
 				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 				pcell.setBorder(Rectangle.NO_BORDER);
 				mTable.addCell(pcell);
-			}else{
+			}else if(report_for.equals("combo_aday_bokeya"))
+			{
+				AreaService aa=new AreaService();
+				String combo_area=aa.getAreaName();
+				
+				Chunk chunk1 = new Chunk("Combined Coll-Due Report for: ",font2);
+				Chunk chunk2 = new Chunk(combo_area,font2);
+				Paragraph p = new Paragraph(); 
+				p.add(chunk1);
+				p.add(chunk2);
+				
+				pcell=new PdfPCell(p);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setBorder(Rectangle.NO_BORDER);
+				mTable.addCell(pcell);
+			}
+			
+			else{
 				
 				Chunk chunk1 = new Chunk("REGIONAL OFFICE : ",font2);
 				Chunk chunk2 = new Chunk(String.valueOf(Area.values()[Integer.valueOf(area)-1]),font3);
@@ -219,6 +237,12 @@ public class MonthlyCollectionReport extends BaseAction {
 			{
 				
         		aday_bokeya(document);
+			}
+        	
+        	if(report_for.equals("combo_aday_bokeya"))
+			{
+				
+        		combo_aday_bokeya(document);
 			}
         	
         	
@@ -1690,7 +1714,14 @@ public class MonthlyCollectionReport extends BaseAction {
 		pcell.setRowspan(2);
 		pdfPTable.addCell(pcell);
 		
-		pcell = new PdfPCell(new Paragraph("Dues till "+Month.values()[Integer.valueOf(bill_month)-2]+"'"+bill_year,ReportUtil.f9B));
+		int prev_mon= Integer.valueOf(bill_month)-2;
+		String prev_yr= bill_year;
+		if (bill_month.equals("1")){
+			prev_mon= 11;
+			prev_yr= String.valueOf(Integer.parseInt(bill_year)-1);
+		}
+		
+		pcell = new PdfPCell(new Paragraph("Dues till "+Month.values()[prev_mon]+"'"+prev_yr,ReportUtil.f9B));
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		//pcell.setColspan(1);
@@ -1744,16 +1775,17 @@ public class MonthlyCollectionReport extends BaseAction {
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		pcell.setRowspan(1);		
-	//	pcell.setColspan(1);
+		pcell.setColspan(2);
 		pdfPTable.addCell(pcell);
 		
+		/*
 		pcell = new PdfPCell(new Paragraph("Equivalent Avg Dues Month",ReportUtil.f8B));
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		pcell.setRowspan(1);
-	//	pcell.setColspan(1);
+	
 		pdfPTable.addCell(pcell);
-		
+		*/
 		//document.add(pdfPTable);
 		
 		
@@ -1818,30 +1850,25 @@ public class MonthlyCollectionReport extends BaseAction {
 			
 			try {
 				
-				String tillPreviousMonthDues_sql="SELECT CN, CC, SUM (amount) TOTAL"
-												 + "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
-												 + "                   CUSTOMER_CATEGORY CC, "
-												 + "                   sum( nvl(PAYABLE_AMOUNT,0)) amount "
-												 + "              FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
-												 + "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
-												 + "                   AND BM.AREA_ID = '"+area+"' "
-												 + "                   AND bm.status = 1 "
-												 + "                   AND bill_month < "+currentMonth+" "
-												 + "                   AND bill_year <= "+currentYear+" "
-												 + "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
-												 + "          UNION ALL "
-												 + "            SELECT MCC.CATEGORY_NAME, "
-												 + "                   CUSTOMER_CATEGORY, "
-												 + "                   sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
-												 + "              FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
-												 + "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
-												 + "                   AND BNM.AREA_ID = '"+area+"' "
-												 + "                   AND bnm.status = 1 "
-												 + "                   AND bill_month < "+currentMonth+" "
-												 + "                   AND bill_year <= "+currentYear+" "
-												 + "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
-												 + "GROUP BY CC, CN "
-												 + "ORDER BY CC";
+				int prev_month=currentMonth-1;
+				int prev_year=currentYear;
+				if(currentMonth==1){prev_year=(currentYear-1);prev_month=12;}
+				String prev_month_str=String.valueOf(prev_month);
+				if(prev_month_str.length()<2){
+					prev_month_str = "0"+ prev_month_str;
+				}
+				
+				String tillPreviousMonthDues_sql=
+						
+						"  SELECT CATEGORY_NAME CN, " +
+						"         CATEGORY_ID CC, " +
+						"         SUM (NVL (getBalance (CUSTOMER_ID, "+prev_year+prev_month_str+"), 0)) TOTAL " +
+						"    FROM mview_customer_info cc " +
+						"   WHERE AREA_ID in( '"+area+"' ) and status=1 " +
+						" GROUP BY CATEGORY_NAME, CATEGORY_ID " +
+						" ORDER BY CATEGORY_ID " 
+ ;
+
 				
 				
 				PreparedStatement psl=conn.prepareStatement(tillPreviousMonthDues_sql);
@@ -1871,10 +1898,10 @@ public class MonthlyCollectionReport extends BaseAction {
 			
 			try{
 				
-				String salesCurrentMonth_sql= "SELECT CN, CC, SUM (amount) TOTAL "
+				String salesCurrentMonth_sql= " SELECT CN, CC, SUM (amount) TOTAL "
 											+ "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
 											+ "                   CUSTOMER_CATEGORY CC, "
-											+ "                   sum( nvl(PAYABLE_AMOUNT,0)) amount "
+											+ "                   sum( nvl(billed_amount,0)) amount "
 											+ "              FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
 											+ "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
 											+ "                   AND BM.AREA_ID = '"+area+"' "
@@ -1884,15 +1911,15 @@ public class MonthlyCollectionReport extends BaseAction {
 											+ "          UNION ALL "
 											+ "            SELECT MCC.CATEGORY_NAME, "
 											+ "                   CUSTOMER_CATEGORY, "
-											+ "                   sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
+											+ "                   sum( nvl(billed_amount,0)) amount "
 											+ "              FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
 											+ "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
 											+ "                   AND BNM.AREA_ID = '"+area+"' "
 											+ "                   AND bill_month = "+currentMonth+" "
 											+ "                   AND bill_year = "+currentYear+" "
 											+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
-											+ "GROUP BY CC, CN "
-											+ "ORDER BY CC";
+											+ " GROUP BY CC, CN "
+											+ " ORDER BY CC";
 				
 				PreparedStatement ps1=conn.prepareStatement(salesCurrentMonth_sql);
 				
@@ -1950,8 +1977,8 @@ public class MonthlyCollectionReport extends BaseAction {
 				
 			String collectionCurrentMonth_sql = "SELECT CN, CC, SUM (ACTUAL_REVENUE) TOTAL "				
 												+ "    FROM (  SELECT SUBSTR (BAL.CUSTOMER_ID, 3, 2) CC, "
-												+ "                   CATEGORY_NAME CN, "
-												+ "                   SUM (DEBIT) - SUM (SURCHARGE) ACTUAL_REVENUE, "
+												+ "                   CATEGORY_NAME CN,  "
+												+ "                   SUM (DEBIT) - SUM (SURCHARGE)+SUM (getTaxAmount (CUSTOMER_ID, TRANS_DATE)) ACTUAL_REVENUE, "
 												+ "                   SUM (SURCHARGE) SURCHARGE, "
 												+ "                   0 FEES, "
 												+ "                   0 SECURITY "
@@ -1993,18 +2020,25 @@ public class MonthlyCollectionReport extends BaseAction {
 				e.printStackTrace();
 			}
 			
-			
-			if(currentMonth==1){
-				int previousMonth=12;
-			}
-			
 			int previousMonth=currentMonth-1;
-			
-			if(previousMonth==1){
-				int prvious2ndMonth=12;
+			int pre_yar= currentYear;
+			int prvious2ndMonth=currentMonth-2;
+			int pre_2yar= currentYear;
+			if(currentMonth==1){
+				previousMonth=12;
+				prvious2ndMonth=11;
+				pre_yar=currentYear-1;
+				pre_2yar=currentYear-1;
+			}else if (currentMonth==2){
+				prvious2ndMonth= 12;
+				pre_2yar=currentYear-1;
 			}
 			
-			int prvious2ndMonth=previousMonth-1;
+			
+			
+			
+			
+			
 			
 			int previousYear=currentYear-1;
 			
@@ -2044,7 +2078,7 @@ public class MonthlyCollectionReport extends BaseAction {
 										+ "                       WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
 										+ "                             AND BM.AREA_ID = '"+area+"' "
 										+ "                             AND bill_month = "+previousMonth+" "
-										+ "                             AND bill_year = "+currentYear+" "
+										+ "                             AND bill_year = "+pre_yar+" "
 										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
 										+ "                    UNION ALL "
 										+ "                      SELECT MCC.CATEGORY_NAME, "
@@ -2054,7 +2088,7 @@ public class MonthlyCollectionReport extends BaseAction {
 										+ "                       WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
 										+ "                             AND BNM.AREA_ID = '"+area+"' "
 										+ "                             AND bill_month = "+previousMonth+" "
-										+ "                             AND bill_year = "+currentYear+" "
+										+ "                             AND bill_year = "+pre_yar+" "
 										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
 										+ "          GROUP BY CC, CN "
 										+ "          UNION ALL "
@@ -2066,7 +2100,7 @@ public class MonthlyCollectionReport extends BaseAction {
 										+ "                       WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
 										+ "                             AND BM.AREA_ID = '"+area+"' "
 										+ "                             AND bill_month = "+prvious2ndMonth+" "
-										+ "                             AND bill_year = "+currentYear+" "
+										+ "                             AND bill_year = "+pre_2yar+" "
 										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
 										+ "                    UNION ALL "
 										+ "                      SELECT MCC.CATEGORY_NAME, "
@@ -2076,7 +2110,7 @@ public class MonthlyCollectionReport extends BaseAction {
 										+ "                       WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
 										+ "                             AND BNM.AREA_ID = '"+area+"' "
 										+ "                             AND bill_month = "+prvious2ndMonth+" "
-										+ "                             AND bill_year = "+currentYear+" "
+										+ "                             AND bill_year = "+pre_2yar+" "
 										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
 										+ "          GROUP BY CC, CN) "
 										+ "GROUP BY CC, CN "
@@ -2108,33 +2142,33 @@ public class MonthlyCollectionReport extends BaseAction {
 			
 			try{
 				String disconnectedDues_sql = "SELECT CN, CC, SUM (amount) TOTAL "
-											+ "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
-											+ "                   CUSTOMER_CATEGORY CC, "
-											+ "                   sum( nvl(PAYABLE_AMOUNT,0)) amount "
-											+ "              FROM bill_metered bm, "
-											+ "                   mst_CUSTOMER_CATEGORY mcc, "
-											+ "                   customer_connection cc "
-											+ "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
-											+ "                   AND BM.CUSTOMER_ID = CC.CUSTOMER_ID "
-											+ "                   AND BM.AREA_ID = '"+area+"' "
-											+ "                   AND bm.status = 1 "
-											+ "                   AND CC.STATUS = 0 "
-											+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
-											+ "          UNION ALL "
-											+ "            SELECT MCC.CATEGORY_NAME, "
-											+ "                   CUSTOMER_CATEGORY, "
-											+ "                   sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
-											+ "              FROM bill_non_metered bnm, "
-											+ "                   mst_CUSTOMER_CATEGORY mcc, "
-											+ "                   customer_connection cc "
-											+ "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
-											+ "                   AND bnm.CUSTOMER_ID = CC.CUSTOMER_ID "
-											+ "                   AND BNM.AREA_ID = '"+area+"' "
-											+ "                   AND bnm.status = 1 "
-											+ "                   AND CC.STATUS = 0 "
-											+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
-											+ "GROUP BY CC, CN "
-											+ "ORDER BY CC";
+						+ "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
+						+ "                   CUSTOMER_CATEGORY CC, "
+						+ "                   sum( nvl(billed_amount,0)) amount "
+						+ "              FROM bill_metered bm, "
+						+ "                   mst_CUSTOMER_CATEGORY mcc, "
+						+ "                   customer_connection cc "
+						+ "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+						+ "                   AND BM.CUSTOMER_ID = CC.CUSTOMER_ID "
+						+ "                   AND BM.AREA_ID = '"+area+"' "
+						+ "                   AND bm.status = 1 "
+						+ "                   AND CC.STATUS = 0 "
+						+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+						+ "          UNION ALL "
+						+ "            SELECT MCC.CATEGORY_NAME, "
+						+ "                   CUSTOMER_CATEGORY, "
+						+ "                   sum( nvl(billed_amount,0)) amount "
+						+ "              FROM bill_non_metered bnm, "
+						+ "                   mst_CUSTOMER_CATEGORY mcc, "
+						+ "                   customer_connection cc "
+						+ "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+						+ "                   AND bnm.CUSTOMER_ID = CC.CUSTOMER_ID "
+						+ "                   AND BNM.AREA_ID = '"+area+"' "
+						+ "                   AND bnm.status = 1 "
+						+ "                   AND CC.STATUS = 0 "
+						+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+						+ "GROUP BY CC, CN "
+						+ "ORDER BY CC";
 				
 				PreparedStatement psl = conn.prepareStatement(disconnectedDues_sql);
 				ResultSet resultSet = psl.executeQuery();
@@ -2273,11 +2307,12 @@ public class MonthlyCollectionReport extends BaseAction {
 			pcell = new PdfPCell(new Paragraph(taka_format.format(disconDues),ReportUtil.f10));
 			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			pcell.setColspan(1);
+			pcell.setColspan(2);
 			pcell.setPadding(2);
 			pdfPTable.addCell(pcell);
 			
-			double disConEquivalentAvgDuesMonths = (totalDuesTillCurrentMonth + disconDues)/avgSalesMonths;
+			//double disConEquivalentAvgDuesMonths = (totalDuesTillCurrentMonth + disconDues)/avgSalesMonths;
+			double disConEquivalentAvgDuesMonths =  disconDues/avgSalesMonths;
 			
 			if(disConEquivalentAvgDuesMonths>0){
 				//System.out.println("ok");
@@ -2286,14 +2321,15 @@ public class MonthlyCollectionReport extends BaseAction {
 			}
 			
 			totalDisConEquiAvgDuesMonth= (totalDisConEquiAvgDuesMonth + disConEquivalentAvgDuesMonths);
-			
+			//totalDisConEquiAvgDuesMonth= (0 + disConEquivalentAvgDuesMonths);
+			/*
 			pcell = new PdfPCell(new Paragraph(taka_format.format(disConEquivalentAvgDuesMonths > 0 ? disConEquivalentAvgDuesMonths : 0.00),ReportUtil.f10));
 			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			pcell.setColspan(1);
 			pcell.setPadding(2);
 			pdfPTable.addCell(pcell);
-			
+			*/
 			
 //			 totalGasBill+=transactionList.get(i).getGas_bill();
 //			 totalSurcharge+=transactionList.get(i).getSurcharge();
@@ -2341,31 +2377,777 @@ public class MonthlyCollectionReport extends BaseAction {
 		pcell.setColspan(1);
 		pdfPTable.addCell(pcell);
 		
-		pcell = new PdfPCell(new Paragraph(taka_format.format(totalLast3MonthsAvgsales/listSize),ReportUtil.f10B));
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalLast3MonthsAvgsales),ReportUtil.f10B));
 		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		pcell.setColspan(1);
 		pdfPTable.addCell(pcell);
 		
-		pcell = new PdfPCell(new Paragraph(taka_format.format(totalEquiAvgDuesMonth/listSize),ReportUtil.f10B));
+		//double eqv_avg_due= totalTillCurrentMonthDues/(totalLast3MonthsAvgsales/listSize);
+				double eqv_avg_due= totalTillCurrentMonthDues/totalLast3MonthsAvgsales;
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(eqv_avg_due),ReportUtil.f10B));
 		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		pcell.setColspan(1);
 		pdfPTable.addCell(pcell);
+		
+		
 		
 		pcell = new PdfPCell(new Paragraph(taka_format.format(totalDisConDuesAmount),ReportUtil.f10B));
 		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-		pcell.setColspan(1);
+		pcell.setColspan(2);
 		pdfPTable.addCell(pcell);
 		
+		/*
 		pcell = new PdfPCell(new Paragraph(taka_format.format(totalDisConEquiAvgDuesMonth/listSize),ReportUtil.f10B));
 		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		pcell.setColspan(1);
 		pdfPTable.addCell(pcell);
-		
+		*/
 		document.add(pdfPTable);
 
 		
 	}
 	
+	
+	////bindu combo aday bokeya
+	private  void combo_aday_bokeya(Document document) throws DocumentException
+	{		
+		
+		document.setMargins(20,20,48,72);
+		PdfPTable headLinetable = null;
+		PdfPCell pcell=null;
+		headLinetable = new PdfPTable(3);
+		headLinetable.setWidthPercentage(100);
+		headLinetable.setWidths(new float[]{60,10,30});
+		
+		pcell=new PdfPCell(new Paragraph("Collection Dues Report "+Month.values()[Integer.valueOf(bill_month)-1]+"'"+bill_year, ReportUtil.f11B));
+		pcell.setMinimumHeight(18f);
+		pcell.setHorizontalAlignment(Element.ALIGN_LEFT);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		pcell.setBorder(0);
+		pcell.setPadding(3);
+		headLinetable.addCell(pcell);
+		
+		
+		pcell = new PdfPCell(new Paragraph(""));
+		pcell.setBorder(0);
+		headLinetable.addCell(pcell);		
+				
+		
+		pcell = new PdfPCell(new Paragraph("Amount in Taka"));
+		pcell.setBorder(0);
+		pcell.setPadding(3);
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		headLinetable.addCell(pcell);
+		
+		document.add(headLinetable);
+		
+		
+		PdfPTable pdfPTable = new PdfPTable(10);
+		pdfPTable.setWidthPercentage(100);
+		pdfPTable.setWidths(new float[]{5,15,10,10,10,10,10,10,10,10});
+		//pdfPTable.setHeaderRows(1);
+		
+		pcell = new PdfPCell(new Paragraph("SL",ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		pcell.setRowspan(2);
+		//pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Category",ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		//pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		int prev_mon= Integer.valueOf(bill_month)-2;
+		String prev_yr= bill_year;
+		if (bill_month.equals("1")){
+			prev_mon= 11;
+			prev_yr= String.valueOf(Integer.parseInt(bill_year)-1);
+		}
+		
+		pcell = new PdfPCell(new Paragraph("Dues till "+Month.values()[prev_mon]+"'"+prev_yr,ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		//pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Sales "+Month.values()[Integer.valueOf(bill_month)-1]+"'"+bill_year,ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		//pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Collection "+Month.values()[Integer.valueOf(bill_month)-1]+"'"+bill_year,ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		//pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Dues "+Month.values()[Integer.valueOf(bill_month)-1]+"'"+bill_year,ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		//pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Avg Sales",ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		//pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Equivalent Avg Dues Month",ReportUtil.f8B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	//	pcell.setColspan(1);
+		pcell.setRowspan(2);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph("Disconnected",ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		pcell.setRowspan(1);
+		pcell.setColspan(2);
+		pdfPTable.addCell(pcell);
+		
+		
+		pcell = new PdfPCell(new Paragraph("Dues Amount",ReportUtil.f9B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		pcell.setRowspan(1);		
+		pcell.setColspan(2);
+		pdfPTable.addCell(pcell);
+		
+		/*
+		pcell = new PdfPCell(new Paragraph("Equivalent Avg Dues Month",ReportUtil.f8B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		pcell.setRowspan(1);
+	
+		pdfPTable.addCell(pcell);
+		*/
+		//document.add(pdfPTable);
+		
+		
+//		transactionList=getBankWiseDetailsTransaction();
+//		int listSize=transactionList.size();
+		
+		
+		/////////////
+		
+		ArrayList<AdayBokeyaDTO> categoryList = new ArrayList<AdayBokeyaDTO>();
+		//ArrayList<AdayBokeyaDTO> tillPreviousMonthDues=new ArrayList<AdayBokeyaDTO>();
+		//ArrayList<AdayBokeyaDTO> salesCurrentMonth=new ArrayList<AdayBokeyaDTO>();
+		//ArrayList<AdayBokeyaDTO> collectionCurrentMonth = new ArrayList<AdayBokeyaDTO>();
+		//ArrayList<AdayBokeyaDTO> last3MonthsAvgsales = new ArrayList<AdayBokeyaDTO>();
+		
+		
+		Connection conn = ConnectionManager.getConnection();
+		
+		
+		
+		int currentMonth=Integer.valueOf(bill_month);
+		int currentYear=Integer.valueOf(bill_year);
+		
+		
+		//LinkedHashMap<String, Double> categoryList = new LinkedHashMap<String, Double>();
+		LinkedHashMap<String, Double> tillPreviousMonthDues = new LinkedHashMap<String, Double>();	// query 2
+		LinkedHashMap<String,Double> salesCurrentMonth = new LinkedHashMap<String,Double>();  		// query 3
+		LinkedHashMap<String,Double> collectionCurrentMonth = new LinkedHashMap<String,Double>();	// query 4
+		LinkedHashMap<String,Double> tillCurrentMonthDues = new LinkedHashMap<String,Double>();		// 2+3-4
+		
+		LinkedHashMap<String,Double> last3MonthsAvgsales = new LinkedHashMap<String,Double>();		// query 5
+		
+		LinkedHashMap<String,Double> disconnectedDues = new LinkedHashMap<String,Double>();			// query 6
+		
+		
+		//### 	category list 
+		
+		try{
+			String categoryList_sql = "SELECT CATEGORY_NAME, CATEGORY_ID "
+									+ "    FROM mst_customer_category "
+									+ "ORDER BY CATEGORY_ID";
+			
+			PreparedStatement psl = conn.prepareStatement(categoryList_sql);
+			ResultSet resultSet = psl.executeQuery();
+			
+			while(resultSet.next()){
+				AdayBokeyaDTO categoryListDTO = new AdayBokeyaDTO();
+				categoryListDTO.setCategory_name(resultSet.getString("CATEGORY_NAME"));
+				categoryListDTO.setCategory_id(resultSet.getString("CATEGORY_ID"));
+				
+				categoryList.add(categoryListDTO);
+			}
+		}catch(SQLException e){e.printStackTrace();
+			
+		}
+		
+		
+		
+		String combo_area_sql="select area from USER_AREAS where USERID='"+loggedInUser.getUserId()+"'UNION SELECT area  FROM MST_USER  WHERE USERID='"+loggedInUser.getUserId()+"'";
+		
+		// **** 	Dues till previous month 
+			
+			try {
+				
+				int prev_month=currentMonth-1;
+				int prev_year=currentYear;
+				if(currentMonth==1){prev_year=(currentYear-1);prev_month=12;}
+				String prev_month_str=String.valueOf(prev_month);
+				if(prev_month_str.length()<2){
+					prev_month_str = "0"+ prev_month_str;
+				}
+				
+				String tillPreviousMonthDues_sql=
+						
+						"  SELECT CATEGORY_NAME CN, " +
+						"         CATEGORY_ID CC, " +
+						"         SUM (NVL (getBalance (CUSTOMER_ID, "+prev_year+prev_month_str+"), 0)) TOTAL " +
+						"    FROM mview_customer_info cc " +
+						"   WHERE AREA_ID in( "+combo_area_sql+" ) and status=1 " +
+						" GROUP BY CATEGORY_NAME, CATEGORY_ID " +
+						" ORDER BY CATEGORY_ID " 
+ ;
+
+				
+				
+				PreparedStatement psl=conn.prepareStatement(tillPreviousMonthDues_sql);
+			
+	        	//System.out.println(ps1);
+	        	//System.out.println(transaction_sql);
+	        	ResultSet resultSet=psl.executeQuery();
+	        	
+	        	
+	        	while(resultSet.next())
+	        	{
+	        		tillPreviousMonthDues.put(resultSet.getString("CC"), resultSet.getDouble("TOTAL"));
+	        	}
+	        	
+	        	resultSet.close();
+			    psl.close();
+//			    conn.close();
+			    
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+			// **** Sales of current month
+			
+			try{
+				
+				String salesCurrentMonth_sql= " SELECT CN, CC, SUM (amount) TOTAL "
+											+ "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
+											+ "                   CUSTOMER_CATEGORY CC, "
+											+ "                   sum( nvl(billed_amount,0)) amount "
+											+ "              FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
+											+ "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+											+ "                   AND BM.AREA_ID in( "+combo_area_sql+" )"
+											+ "                   AND bill_month = "+currentMonth+" "
+											+ "                   AND bill_year = "+currentYear+" "
+											+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+											+ "          UNION ALL "
+											+ "            SELECT MCC.CATEGORY_NAME, "
+											+ "                   CUSTOMER_CATEGORY, "
+											+ "                   sum( nvl(billed_amount,0)) amount "
+											+ "              FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
+											+ "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+											+ "                   AND BNM.AREA_ID in( "+combo_area_sql+" )"
+											+ "                   AND bill_month = "+currentMonth+" "
+											+ "                   AND bill_year = "+currentYear+" "
+											+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+											+ " GROUP BY CC, CN "
+											+ " ORDER BY CC";
+				
+				PreparedStatement ps1=conn.prepareStatement(salesCurrentMonth_sql);
+				
+				ResultSet resultSet = ps1.executeQuery();
+
+				while(resultSet.next()){
+//					AdayBokeyaDTO salesCurrentMonthDTO = new AdayBokeyaDTO();
+//					salesCurrentMonthDTO.setCategory_name(resultSet.getString("CN"));
+//					salesCurrentMonthDTO.setCategory_id(resultSet.getString("CC"));
+//					salesCurrentMonthDTO.setAmount_bill(resultSet.getDouble("TOTAL"));
+					
+					salesCurrentMonth.put(resultSet.getString("CC"), resultSet.getDouble("TOTAL"));
+				}
+				
+				resultSet.close();
+				ps1.close();
+			   // conn.close();
+
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+		
+			
+			// ### 	current month collection
+			
+			try{
+//				String collectionCurrentMonth_sql= "SELECT CN, CC, SUM (amount) TOTAL "
+//												+ "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
+//												+ "                   CUSTOMER_CATEGORY CC, "
+//												+ "                   sum( nvl(PAYABLE_AMOUNT,0)) amount "
+//												+ "              FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
+//												+ "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+//												+ "                   AND BM.AREA_ID = '"+area+"' "
+//												+ "                   AND bm.status = 2 "
+//												+ "                   AND bill_month = "+currentMonth+" "
+//												+ "                   AND bill_year = "+currentYear+" "
+//												+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+//												+ "          UNION ALL "
+//												+ "            SELECT MCC.CATEGORY_NAME, "
+//												+ "                   CUSTOMER_CATEGORY, "
+//												+ "                   sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
+//												+ "              FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
+//												+ "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+//												+ "                   AND BNM.AREA_ID = '"+area+"' "
+//												+ "                   AND bnm.status = 2 "
+//												+ "                   AND bill_month = "+currentMonth+" "
+//												+ "                   AND bill_year = "+currentYear+" "
+//												+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+//												+ "GROUP BY CC, CN "
+//												+ "ORDER BY CC";
+//				
+				
+			
+			// 		## changed from above query similar to catetoey type wise collection report
+				
+			String collectionCurrentMonth_sql = "SELECT CN, CC, SUM (ACTUAL_REVENUE) TOTAL "				
+												+ "    FROM (  SELECT SUBSTR (BAL.CUSTOMER_ID, 3, 2) CC, "
+												+ "                   CATEGORY_NAME CN,  "
+												+ "                   SUM (DEBIT) - SUM (SURCHARGE)+SUM (getTaxAmount (CUSTOMER_ID, TRANS_DATE)) ACTUAL_REVENUE, "
+												+ "                   SUM (SURCHARGE) SURCHARGE, "
+												+ "                   0 FEES, "
+												+ "                   0 SECURITY "
+												+ "              FROM bank_account_ledger BAL, "
+												+ "                   MST_BANK_INFO MBI, "
+												+ "                   MST_BRANCH_INFO MBRI, "
+												+ "                   MST_CUSTOMER_CATEGORY MCC "
+												+ "             WHERE     BAL.BRANCH_ID = MBRI.BRANCH_ID "
+												+ "                   AND MBI.BANK_ID = MBRI.BANK_ID "
+												+ "                   AND MBRI.area_id = MBI.area_id "
+												+ "                   AND SUBSTR (BAL.CUSTOMER_ID, 3, 2) = MCC.CATEGORY_ID "
+												+ "                   AND TO_CHAR (TRANS_DATE, 'MM') = LPAD ("+currentMonth+", 2, 0) "
+												+ "                   AND TO_CHAR (TRANS_DATE, 'YYYY') = "+currentYear+" "
+												+ "                   AND TRANS_TYPE = 1 "
+												+ "                   AND MBRI.AREA_ID in( "+combo_area_sql+" )"
+												+ "          GROUP BY TRANS_TYPE, SUBSTR (BAL.CUSTOMER_ID, 3, 2), CATEGORY_NAME) "
+												+ "GROUP BY CC, CN "
+												+ "ORDER BY CC";
+
+				
+				PreparedStatement psl = conn.prepareStatement(collectionCurrentMonth_sql);
+				
+				ResultSet resultSet = psl.executeQuery();
+				
+				while(resultSet.next()){
+//					AdayBokeyaDTO collectionCurrentMonthDTO = new AdayBokeyaDTO();
+//					collectionCurrentMonthDTO.setCategory_name(resultSet.getString("CN"));
+//					collectionCurrentMonthDTO.setCategory_id(resultSet.getString("CC"));
+//					collectionCurrentMonthDTO.setAmount_bill(resultSet.getDouble("TOTAL"));
+					
+					collectionCurrentMonth.put(resultSet.getString("CC"),resultSet.getDouble("TOTAL"));
+				}
+				
+				resultSet.close();
+			    psl.close();
+			   // conn.close();
+
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+			
+			
+			int previousMonth=currentMonth-1;
+			int pre_yar= currentYear;
+			int prvious2ndMonth=currentMonth-2;
+			int pre_2yar= currentYear;
+			if(currentMonth==1){
+				previousMonth=12;
+				prvious2ndMonth=11;
+				pre_yar=currentYear-1;
+				pre_2yar=currentYear-1;
+			}else if (currentMonth==2){
+				prvious2ndMonth= 12;
+				pre_2yar=currentYear-1;
+			}
+			
+			
+			// ### 	last 3 months avg sales
+			
+			
+			try{
+				String last3MonthsAvgSales ="SELECT CN, CC, round(SUM (total)/3) G_Total "
+										+ "    FROM (  SELECT CN, CC, SUM (amount) total "
+										+ "              FROM (  SELECT MCC.CATEGORY_NAME CN, "
+										+ "                             CUSTOMER_CATEGORY CC, "
+										+ "                             sum( nvl(PAYABLE_AMOUNT,0)) amount "
+										+ "                        FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
+										+ "                       WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+										+ "                             AND BM.AREA_ID in( "+combo_area_sql+" ) "
+										+ "                             AND bill_month = "+currentMonth+" "
+										+ "                             AND bill_year = "+currentYear+" "
+										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+										+ "                    UNION ALL "
+										+ "                      SELECT MCC.CATEGORY_NAME, "
+										+ "                             CUSTOMER_CATEGORY, "
+										+ "                             sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
+										+ "                        FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
+										+ "                       WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+										+ "                             AND BNM.AREA_ID in( "+combo_area_sql+" )"
+										+ "                             AND bill_month = "+currentMonth+" "
+										+ "                             AND bill_year = "+currentYear+" "
+										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+										+ "          GROUP BY CC, CN "
+										+ "          UNION ALL "
+										+ "            SELECT CN, CC, SUM (amount) total "
+										+ "              FROM (  SELECT MCC.CATEGORY_NAME CN, "
+										+ "                             CUSTOMER_CATEGORY CC, "
+										+ "                             sum( nvl(PAYABLE_AMOUNT,0)) amount "
+										+ "                        FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
+										+ "                       WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+										+ "                             AND BM.AREA_ID in( "+combo_area_sql+" )"
+										+ "                             AND bill_month = "+previousMonth+" "
+										+ "                             AND bill_year = "+pre_yar+" "
+										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+										+ "                    UNION ALL "
+										+ "                      SELECT MCC.CATEGORY_NAME, "
+										+ "                             CUSTOMER_CATEGORY, "
+										+ "                             sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
+										+ "                        FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
+										+ "                       WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+										+ "                             AND BNM.AREA_ID in( "+combo_area_sql+" ) "
+										+ "                             AND bill_month = "+previousMonth+" "
+										+ "                             AND bill_year = "+pre_yar+" "
+										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+										+ "          GROUP BY CC, CN "
+										+ "          UNION ALL "
+										+ "            SELECT CN, CC, SUM (amount) total "
+										+ "              FROM (  SELECT MCC.CATEGORY_NAME CN, "
+										+ "                             CUSTOMER_CATEGORY CC, "
+										+ "                             sum( nvl(PAYABLE_AMOUNT,0)) amount "
+										+ "                        FROM bill_metered bm, mst_CUSTOMER_CATEGORY mcc "
+										+ "                       WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+										+ "                             AND BM.AREA_ID in( "+combo_area_sql+" )"
+										+ "                             AND bill_month = "+prvious2ndMonth+" "
+										+ "                             AND bill_year = "+pre_2yar+" "
+										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+										+ "                    UNION ALL "
+										+ "                      SELECT MCC.CATEGORY_NAME, "
+										+ "                             CUSTOMER_CATEGORY, "
+										+ "                             sum( nvl(ACTUAL_PAYABLE_AMOUNT,0)) amount "
+										+ "                        FROM bill_non_metered bnm, mst_CUSTOMER_CATEGORY mcc "
+										+ "                       WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+										+ "                             AND BNM.AREA_ID in( "+combo_area_sql+" )"
+										+ "                             AND bill_month = "+prvious2ndMonth+" "
+										+ "                             AND bill_year = "+pre_2yar+" "
+										+ "                    GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+										+ "          GROUP BY CC, CN) "
+										+ "GROUP BY CC, CN "
+										+ "ORDER BY CC";
+				
+				PreparedStatement psl = conn.prepareStatement(last3MonthsAvgSales);
+				
+				ResultSet resultSet = psl.executeQuery();
+				
+				while(resultSet.next()){
+//					AdayBokeyaDTO last3MonthsSalesDTO = new AdayBokeyaDTO();
+//					last3MonthsSalesDTO.setCategory_name(resultSet.getString("CN"));
+//					last3MonthsSalesDTO.setCategory_id(resultSet.getString("CC"));
+//					last3MonthsSalesDTO.setAmount_bill(resultSet.getDouble("G_Total"));
+					
+					last3MonthsAvgsales.put(resultSet.getString("CC"),resultSet.getDouble("G_Total"));
+				}
+				
+				resultSet.close();
+			    psl.close();
+			   // conn.close();
+
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+			
+			
+			// ### 	disconnected customers dues bill
+			
+			try{
+				String disconnectedDues_sql = "SELECT CN, CC, SUM (amount) TOTAL "
+						+ "    FROM (  SELECT MCC.CATEGORY_NAME CN, "
+						+ "                   CUSTOMER_CATEGORY CC, "
+						+ "                   sum( nvl(billed_amount,0)) amount "
+						+ "              FROM bill_metered bm, "
+						+ "                   mst_CUSTOMER_CATEGORY mcc, "
+						+ "                   customer_connection cc "
+						+ "             WHERE     BM.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+						+ "                   AND BM.CUSTOMER_ID = CC.CUSTOMER_ID "
+						+ "                   AND BM.AREA_ID in( "+combo_area_sql+" ) "
+						+ "                   AND bm.status = 1 "
+						+ "                   AND CC.STATUS = 0 "
+						+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME "
+						+ "          UNION ALL "
+						+ "            SELECT MCC.CATEGORY_NAME, "
+						+ "                   CUSTOMER_CATEGORY, "
+						+ "                   sum( nvl(billed_amount,0)) amount "
+						+ "              FROM bill_non_metered bnm, "
+						+ "                   mst_CUSTOMER_CATEGORY mcc, "
+						+ "                   customer_connection cc "
+						+ "             WHERE     bnm.CUSTOMER_CATEGORY = MCC.CATEGORY_ID "
+						+ "                   AND bnm.CUSTOMER_ID = CC.CUSTOMER_ID "
+						+ "                   AND BNM.AREA_ID in( "+combo_area_sql+" ) "
+						+ "                   AND bnm.status = 1 "
+						+ "                   AND CC.STATUS = 0 "
+						+ "          GROUP BY CUSTOMER_CATEGORY, MCC.CATEGORY_NAME) "
+						+ "GROUP BY CC, CN "
+						+ "ORDER BY CC";
+				
+				PreparedStatement psl = conn.prepareStatement(disconnectedDues_sql);
+				ResultSet resultSet = psl.executeQuery();
+				
+				while(resultSet.next()){
+					disconnectedDues.put(resultSet.getString("CC"), resultSet.getDouble("TOTAL"));
+				}
+				
+				resultSet.close();
+				psl.close();
+			//	conn.close();
+			}catch(SQLException e){
+				e.printStackTrace();
+			}finally{try{ConnectionManager.closeConnection(conn);} catch (Exception e)
+			{e.printStackTrace();}conn = null;}
+			
+			
+		double totalTillPreviousMonthDues=0.0;
+		double totalSalesCurrentMonth=0.0;
+		double totalCollectionCurrentMonth=0.0;
+		double totalTillCurrentMonthDues=0.0;
+		
+		double totalLast3MonthsAvgsales=0.0;
+		double totalEquiAvgDuesMonth = 0.0;
+		double totalDisConDuesAmount = 0.0;
+		double totalDisConEquiAvgDuesMonth = 0.0;
+		
+		int listSize=categoryList.size();
+		
+		
+		for(int i=0;i<listSize;i++)
+		{
+//			LinkedHashMap<String, Double> tillPreviousMonthDues = new LinkedHashMap<String, Double>();	// query 2
+//			LinkedHashMap<String,Double> salesCurrentMonth = new LinkedHashMap<String,Double>();  		// query 3
+//			LinkedHashMap<String,Double> collectionCurrentMonth = new LinkedHashMap<String,Double>();	// query 4
+//			LinkedHashMap<String,Double> tillCurrentMonthDues = new LinkedHashMap<String,Double>();		// 2+3-4
+//			
+//			LinkedHashMap<String,Double> last3MonthsAvgsales = new LinkedHashMap<String,Double>();		// query 5
+//			
+//			LinkedHashMap<String,Double> disconnectedDues = new LinkedHashMap<String,Double>();			// query 6
+			
+			
+			pcell = new PdfPCell(new Paragraph(String.valueOf(i+1),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			pcell = new PdfPCell(new Paragraph(categoryList.get(i).getCategory_name(),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_LEFT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+					
+			totalTillPreviousMonthDues=totalTillPreviousMonthDues+(tillPreviousMonthDues.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : tillPreviousMonthDues.get(categoryList.get(i).getCategory_id()));
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(tillPreviousMonthDues.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : tillPreviousMonthDues.get(categoryList.get(i).getCategory_id())),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+					
+			totalSalesCurrentMonth=totalSalesCurrentMonth+ (salesCurrentMonth.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : salesCurrentMonth.get(categoryList.get(i).getCategory_id()));
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(salesCurrentMonth.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : salesCurrentMonth.get(categoryList.get(i).getCategory_id())),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			totalCollectionCurrentMonth=totalCollectionCurrentMonth + (collectionCurrentMonth.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : collectionCurrentMonth.get(categoryList.get(i).getCategory_id()));
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(collectionCurrentMonth.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : collectionCurrentMonth.get(categoryList.get(i).getCategory_id())),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			
+			
+			double totalDuesTillCurrentMonth = (double)(tillPreviousMonthDues.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : tillPreviousMonthDues.get(categoryList.get(i).getCategory_id())) + (salesCurrentMonth.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : salesCurrentMonth.get(categoryList.get(i).getCategory_id())) - (collectionCurrentMonth.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : collectionCurrentMonth.get(categoryList.get(i).getCategory_id()));
+			totalTillCurrentMonthDues = totalTillCurrentMonthDues + totalDuesTillCurrentMonth;
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(totalDuesTillCurrentMonth),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			double avgSalesMonths = (double) (last3MonthsAvgsales.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : last3MonthsAvgsales.get(categoryList.get(i).getCategory_id()));
+			
+			totalLast3MonthsAvgsales=totalLast3MonthsAvgsales+avgSalesMonths;
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(avgSalesMonths),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			
+			
+			double equivalentAvgDuesMonths = totalDuesTillCurrentMonth/avgSalesMonths;
+			
+			if(equivalentAvgDuesMonths > 0){
+				//System.out.println("ok");
+			}else {
+				equivalentAvgDuesMonths = 0;
+			}
+			
+			totalEquiAvgDuesMonth = (totalEquiAvgDuesMonth + equivalentAvgDuesMonths);
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(equivalentAvgDuesMonths > 0 ? equivalentAvgDuesMonths : 0.00),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			double disconDues = (double) (disconnectedDues.get(categoryList.get(i).getCategory_id()) == null ? 0.00 : disconnectedDues.get(categoryList.get(i).getCategory_id()));
+			
+			if(disconDues > 0){
+				//System.out.println("ok");
+			}else {
+				disconDues = 0;
+			}
+			
+			totalDisConDuesAmount = totalDisConDuesAmount + disconDues;
+			
+			pcell = new PdfPCell(new Paragraph(taka_format.format(disconDues),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(2);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			
+			//double disConEquivalentAvgDuesMonths = (totalDuesTillCurrentMonth + disconDues)/avgSalesMonths;
+			double disConEquivalentAvgDuesMonths =  disconDues/avgSalesMonths;
+			
+			if(disConEquivalentAvgDuesMonths>0){
+				//System.out.println("ok");
+			}else{
+				disConEquivalentAvgDuesMonths=0;
+			}
+			
+			totalDisConEquiAvgDuesMonth= (totalDisConEquiAvgDuesMonth + disConEquivalentAvgDuesMonths);
+			//totalDisConEquiAvgDuesMonth= (0 + disConEquivalentAvgDuesMonths);
+			/*
+			pcell = new PdfPCell(new Paragraph(taka_format.format(disConEquivalentAvgDuesMonths > 0 ? disConEquivalentAvgDuesMonths : 0.00),ReportUtil.f10));
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			pcell.setColspan(1);
+			pcell.setPadding(2);
+			pdfPTable.addCell(pcell);
+			*/
+			
+//			 totalGasBill+=transactionList.get(i).getGas_bill();
+//			 totalSurcharge+=transactionList.get(i).getSurcharge();
+//			 totalFees+=transactionList.get(i).getFees();
+//			 totalSecurityDeposit+=transactionList.get(i).getSecurity();
+//			 total+=transactionList.get(i).getGas_bill()+transactionList.get(i).getSurcharge()+transactionList.get(i).getFees()+transactionList.get(i).getSecurity();
+					
+		}
+		
+		pcell = new PdfPCell(new Paragraph("Grand Total",ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		pcell.setColspan(2);
+		pdfPTable.addCell(pcell);
+		
+//		NumberFormat df = NumberFormat.getCurrencyInstance();
+//		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+//		//dfs.setCurrencySymbol("$");
+//		//dfs.set
+//		dfs.setGroupingSeparator('.');
+//		dfs.setMonetaryDecimalSeparator('.');
+//		((DecimalFormat) df).setDecimalFormatSymbols(dfs);
+//		System.out.println(df.format(3333454));
+//		System.out.println(df.format(totalTillPreviousMonthDues));
+		
+//		System.out.println(totalTillPreviousMonthDues);
+		//System.out.println(taka_format.format(totalTillPreviousMonthDues));
+		//System.out.println(taka_format_BD.format(totalTillPreviousMonthDues));
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalTillPreviousMonthDues),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalSalesCurrentMonth),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalCollectionCurrentMonth),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalTillCurrentMonthDues),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalLast3MonthsAvgsales),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		//double eqv_avg_due= totalTillCurrentMonthDues/(totalLast3MonthsAvgsales/listSize);
+		double eqv_avg_due= totalTillCurrentMonthDues/totalLast3MonthsAvgsales;
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(eqv_avg_due),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		
+		
+		
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalDisConDuesAmount),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(2);
+		pdfPTable.addCell(pcell);
+		
+		/*
+		pcell = new PdfPCell(new Paragraph(taka_format.format(totalDisConEquiAvgDuesMonth/listSize),ReportUtil.f10B));
+		pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+		pcell.setColspan(1);
+		pdfPTable.addCell(pcell);
+		*/
+		document.add(pdfPTable);
+
+		
+	}
 	
 	/*	All Category type wise collection report
 	 * 

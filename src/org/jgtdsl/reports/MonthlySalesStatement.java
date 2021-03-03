@@ -318,6 +318,12 @@ public class MonthlySalesStatement extends BaseAction {
 		BigDecimal subSumValueOfActCon=BigDecimal.ZERO;
 		BigDecimal subSumMinCharge=BigDecimal.ZERO;
 		BigDecimal subSumHHV=BigDecimal.ZERO;
+		
+		BigDecimal subSumVat_rebate=BigDecimal.ZERO;
+		BigDecimal totalVat_rebate=BigDecimal.ZERO;
+		BigDecimal actual_bill_amount=BigDecimal.ZERO;
+		BigDecimal vat_rebate_amount=BigDecimal.ZERO;
+		
 		BigDecimal subSumMeterRent=BigDecimal.ZERO;
 		BigDecimal subSumTotalBill=BigDecimal.ZERO;
 		BigDecimal sub_customer_count=BigDecimal.ZERO;
@@ -325,10 +331,10 @@ public class MonthlySalesStatement extends BaseAction {
 		
 	
 		
-		PdfPTable datatable1 = new PdfPTable(12);
+		PdfPTable datatable1 = new PdfPTable(13);
 		
 		datatable1.setWidthPercentage(100);
-		datatable1.setWidths(new float[] {15,40,18,40,30,25,30,30,30,40,40,40
+		datatable1.setWidths(new float[] {15,40,18,40,30,25,30,30,30,40,40,35,40
 		});
 		
 		
@@ -371,7 +377,7 @@ public class MonthlySalesStatement extends BaseAction {
 		datatable1.addCell(pcell);	
 		
 		pcell=new PdfPCell(new Paragraph("Billing Amount",font3));
-		pcell.setColspan(5);
+		pcell.setColspan(6);
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		datatable1.addCell(pcell);		
 		
@@ -386,6 +392,11 @@ public class MonthlySalesStatement extends BaseAction {
 		datatable1.addCell(pcell);
 		
 		pcell=new PdfPCell(new Paragraph("NHV/HHV",font3));
+		pcell.setRowspan(2);
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		datatable1.addCell(pcell);
+		
+		pcell=new PdfPCell(new Paragraph("Vat rebate",font3));
 		pcell.setRowspan(2);
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		datatable1.addCell(pcell);
@@ -443,16 +454,9 @@ public class MonthlySalesStatement extends BaseAction {
 						"         SUM (METER_RENT) METER_RENT, " +
 						"         SUM (SURCHARGE_AMOUNT) SURCHARGE_AMOUNT, " +
 
-						"         SUM (HHV_NHV_AMOUNT) HHV_NHV_AMOUNT, SUM(TOTAL_AMOUNT)+SUM (nvl(HHV_NHV_AMOUNT,0))  TOTAL_AMOUNT, " +
+						"         SUM (HHV_NHV_AMOUNT) HHV_NHV_AMOUNT,SUM (SR.VAT_REBATE) vat_rebate, SUM(TOTAL_AMOUNT)+SUM (nvl(HHV_NHV_AMOUNT,0))  TOTAL_AMOUNT " +
 						//"         round(SUM ((TOTAL_ACTUAL_CONSUMPTION*RATE)+nvl(MINIMUM_CHARGE,0)+nvl(METER_RENT,0)+nvl(HHV_NHV_AMOUNT,0))) TOTAL_AMOUNT " +
 						
-
-						"         SUM (HHV_NHV_AMOUNT) HHV_NHV_AMOUNT, " +
-						//"         round(SUM ((TOTAL_ACTUAL_CONSUMPTION*RATE)+nvl(MINIMUM_CHARGE,0)+nvl(METER_RENT,0)+nvl(HHV_NHV_AMOUNT,0))) TOTAL_AMOUNT " +
-
-						"         SUM (HHV_NHV_AMOUNT) HHV_NHV_AMOUNT " +
-						//"         round(SUM ((TOTAL_ACTUAL_CONSUMPTION*round(RATE,2))+nvl(MINIMUM_CHARGE,0)+nvl(METER_RENT,0)+nvl(HHV_NHV_AMOUNT,0))) TOTAL_AMOUNT " +
-
 						"    FROM SALES_REPORT SR, CUSTOMER_CONNECTION conn, MST_CUSTOMER_CATEGORY mcc " +
 						"   WHERE    " + whereClause +
 						" GROUP BY MCC.CATEGORY_ID, " +
@@ -546,6 +550,11 @@ public class MonthlySalesStatement extends BaseAction {
 	    				pcell.setColspan(1);
 	    				pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 	    				datatable1.addCell(pcell);
+	    			// vat rebate 	
+	    				pcell=new PdfPCell(new Paragraph(taka_format.format(subSumVat_rebate),font3));
+	    				pcell.setColspan(1);
+	    				pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+	    				datatable1.addCell(pcell);
 	    				
 	    			
 	    				
@@ -573,6 +582,9 @@ public class MonthlySalesStatement extends BaseAction {
 	    				totalValueOfActCon=totalValueOfActCon.add(subSumValueOfActCon);
 	    				totalMinCharge=totalMinCharge.add(subSumMinCharge);
 	    				totalHHV=totalHHV.add(subSumHHV);
+	    				
+	    				totalVat_rebate= totalVat_rebate.add(subSumVat_rebate);
+	    				
 	    				totalMeterRent=totalMeterRent.add(subSumMeterRent);
 	    				totalTotalBill=totalTotalBill.add(subSumTotalBill);
 	    				
@@ -590,6 +602,7 @@ public class MonthlySalesStatement extends BaseAction {
 	    					 subSumMeterRent=BigDecimal.ZERO;
 	    					 subSumTotalBill=BigDecimal.ZERO;
 	    					 sub_customer_count=BigDecimal.ZERO;
+	    					 subSumVat_rebate = BigDecimal.ZERO;
 	    				
 	    				
 	    				
@@ -667,6 +680,8 @@ public class MonthlySalesStatement extends BaseAction {
     			
     			
     			 total_bill_amount	 	= rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT");
+    			 vat_rebate_amount 		= rs1.getFloat("vat_rebate")==0?BigDecimal.ZERO:rs1.getBigDecimal("vat_rebate");
+    			 actual_bill_amount 	= total_bill_amount.subtract(vat_rebate_amount);
     			 demand_charge_amount   = rs1.getFloat("MINIMUM_CHARGE")==0?BigDecimal.ZERO:rs1.getBigDecimal("MINIMUM_CHARGE");
     			 meter_rent_amount		= rs1.getFloat("METER_RENT")==0?BigDecimal.ZERO:rs1.getBigDecimal("METER_RENT");
     			 nhv_hhv_amount			= rs1.getFloat("HHV_NHV_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("HHV_NHV_AMOUNT");
@@ -759,16 +774,27 @@ public class MonthlySalesStatement extends BaseAction {
     			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
     			datatable1.addCell(pcell);
     			
+    		//vat rebate test	
     			
-    			
-    			
-    			subSumTotalBill=subSumTotalBill.add(rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT"));
+    			subSumVat_rebate=subSumVat_rebate.add(rs1.getFloat("vat_rebate")==0?BigDecimal.ZERO:rs1.getBigDecimal("vat_rebate"));
     			
     			if(category.equals("01")||category.equals("02"))
     			{
-    				domGovTotalBill=domGovTotalBill.add(rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT"));
+    				domGovHHV=domGovHHV.add(rs1.getFloat("HHV_NHV_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("HHV_NHV_AMOUNT"));
     			}
-    			pcell=new PdfPCell(new Paragraph(taka_format.format(rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT")),font2));
+    			pcell=new PdfPCell(new Paragraph(taka_format.format(rs1.getFloat("vat_rebate")==0?BigDecimal.ZERO:rs1.getBigDecimal("vat_rebate")),font2));
+    			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+    			datatable1.addCell(pcell);
+    			
+    			
+    			
+    			subSumTotalBill=subSumTotalBill.add(actual_bill_amount);
+    			
+    			if(category.equals("01")||category.equals("02"))
+    			{
+    				domGovTotalBill=domGovTotalBill.add(actual_bill_amount);
+    			}
+    			pcell=new PdfPCell(new Paragraph(taka_format.format(actual_bill_amount),font2));
     			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
     			datatable1.addCell(pcell);
     			
@@ -795,6 +821,9 @@ public class MonthlySalesStatement extends BaseAction {
 			totalValueOfActCon=totalValueOfActCon.add(subSumValueOfActCon);
 			totalMinCharge=totalMinCharge.add(subSumMinCharge);
 			totalHHV=totalHHV.add(subSumHHV);
+			
+			totalVat_rebate = totalVat_rebate.add(subSumVat_rebate);
+			
 			totalMeterRent=totalMeterRent.add(subSumMeterRent);
 			totalTotalBill=totalTotalBill.add(subSumTotalBill);
 			total_customer_count=total_customer_count.add(sub_customer_count);
@@ -921,6 +950,11 @@ public class MonthlySalesStatement extends BaseAction {
 			pcell.setColspan(1);
 			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			datatable1.addCell(pcell);
+		// vat rebate test	
+			pcell=new PdfPCell(new Paragraph(taka_format.format(subSumVat_rebate),font3));
+			pcell.setColspan(1);
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			datatable1.addCell(pcell);
 			
 			
 			
@@ -997,6 +1031,11 @@ public class MonthlySalesStatement extends BaseAction {
 			datatable1.addCell(pcell);
 			
 			pcell=new PdfPCell(new Paragraph(taka_format.format(totalHHV),font3));
+			pcell.setColspan(1);
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			datatable1.addCell(pcell);
+		// vat rebate test	
+			pcell=new PdfPCell(new Paragraph(taka_format.format(totalVat_rebate),font3));
 			pcell.setColspan(1);
 			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			datatable1.addCell(pcell);
@@ -1351,7 +1390,10 @@ public class MonthlySalesStatement extends BaseAction {
 		BigDecimal totalMeterRent=BigDecimal.ZERO;
 		BigDecimal totalTotalBill=BigDecimal.ZERO;
 		
-		
+		BigDecimal vat_rebate=BigDecimal.ZERO;
+		BigDecimal actual_amount=BigDecimal.ZERO;
+		BigDecimal bill_amount=BigDecimal.ZERO;
+		BigDecimal total_vatrebate=BigDecimal.ZERO;
 		
 	
 		PdfPTable datatable1 =null;
@@ -1364,9 +1406,9 @@ public class MonthlySalesStatement extends BaseAction {
 			
 		}else{
 			
-			datatable1 = new PdfPTable(8);
+			datatable1 = new PdfPTable(9);
 			datatable1.setWidthPercentage(100);
-			datatable1.setWidths(new float[] {15,25,70,30,40,30,30,40});
+			datatable1.setWidths(new float[] {15,25,70,30,40,30,30,40,40});
 			
 		}
 		
@@ -1408,7 +1450,7 @@ public class MonthlySalesStatement extends BaseAction {
 		datatable1.addCell(pcell);
 		
 		pcell=new PdfPCell(new Paragraph("Amount in Taka",font3));
-		pcell.setColspan(4);
+		pcell.setColspan(5);
 		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		datatable1.addCell(pcell);
 //
@@ -1444,6 +1486,11 @@ public class MonthlySalesStatement extends BaseAction {
 //		pcell.setRowspan(2);
 //		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 //		datatable1.addCell(pcell);
+		
+		pcell=new PdfPCell(new Paragraph("Vat rebate",font3));
+		pcell.setRowspan(2);
+		pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		datatable1.addCell(pcell);
 	
 		pcell=new PdfPCell(new Paragraph("Total",font3));
 		pcell.setRowspan(2);
@@ -1526,7 +1573,7 @@ public class MonthlySalesStatement extends BaseAction {
 			       sql1+=" ACTUAL_EXCEPT_MINIMUM, ACTUAL_WITH_MINIMUM, "+
 						" BILLING_UNIT,  DIFFERENCE,TOTAL_ACTUAL_CONSUMPTION,RATE ,"+
 						" VALUE_OF_ACTUAL_CONSUMPTION,MINIMUM_CHARGE, METER_RENT, "+
-						" SURCHARGE_AMOUNT, HHV_NHV_AMOUNT, TOTAL_AMOUNT "+
+						" SURCHARGE_AMOUNT, HHV_NHV_AMOUNT,sr.VAT_REBATE, TOTAL_AMOUNT "+
 						"from SALES_REPORT SR,CUSTOMER_CONNECTION conn,MST_CUSTOMER_CATEGORY mcc,CUSTOMER_PERSONAL_INFO cpi "+
 						"where SR.customer_id=conn.customer_id and  SR.customer_id=cpi.customer_id and BILLING_MONTH=? and BILLING_YEAR=?"+
 						"AND substr(SR.customer_id,3,2)=MCC.CATEGORY_ID and substr(SR.customer_id,1,2)=?"+ 
@@ -1630,11 +1677,18 @@ public class MonthlySalesStatement extends BaseAction {
 //    			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 //    			datatable1.addCell(pcell);
 //    			
+    			total_vatrebate=total_vatrebate.add(rs1.getFloat("VAT_REBATE")==0?BigDecimal.ZERO:rs1.getBigDecimal("VAT_REBATE"));
+    			pcell=new PdfPCell(new Paragraph(taka_format.format(rs1.getFloat("VAT_REBATE")==0?BigDecimal.ZERO:rs1.getBigDecimal("VAT_REBATE")),font2));
+    			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+    			datatable1.addCell(pcell);
     			
     			
+    			vat_rebate=vat_rebate.add(rs1.getFloat("VAT_REBATE")==0?BigDecimal.ZERO:rs1.getBigDecimal("VAT_REBATE"));
+    			bill_amount= rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT");
+    			actual_amount= bill_amount.subtract(vat_rebate) ;
+    			totalTotalBill=totalTotalBill.add(actual_amount);
     			
-    			totalTotalBill=totalTotalBill.add(rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT"));
-    			pcell=new PdfPCell(new Paragraph(taka_format.format(rs1.getFloat("TOTAL_AMOUNT")==0?BigDecimal.ZERO:rs1.getBigDecimal("TOTAL_AMOUNT")),ReportUtil.f8B));
+    			pcell=new PdfPCell(new Paragraph(taka_format.format(actual_amount),ReportUtil.f8B));
     			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
     			datatable1.addCell(pcell);
     		
@@ -1725,7 +1779,10 @@ public class MonthlySalesStatement extends BaseAction {
 //			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 //			datatable1.addCell(pcell);
 			
-			
+			pcell=new PdfPCell(new Paragraph(taka_format.format(total_vatrebate),ReportUtil.f9B));
+			pcell.setColspan(1);
+			pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			datatable1.addCell(pcell);
 			
 			pcell=new PdfPCell(new Paragraph(taka_format.format(totalTotalBill),ReportUtil.f9B));
 			pcell.setColspan(1);

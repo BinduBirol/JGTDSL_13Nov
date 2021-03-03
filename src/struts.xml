@@ -19,7 +19,7 @@
 				<interceptor-ref name="defaultSecurityStack" />
 				<interceptor-ref name="authenticationInterceptor">
 					<param name="excludeActions">CustomError,index,userList,gridRecordFetcher,addNewForm,dashBoard,
-					checkValidity,logout,login,mpgDashboard, websiteView,getServerMessage,fetchAllRoleTypes,fetchCustomerCategory,fetchBanks,fetchBranches,fetchZones,
+					checkValidity,logout,login,mpgDashboard, mpgBank, websiteView,getServerMessage,fetchAllRoleTypes,fetchCustomerCategory,fetchBanks,fetchBranches,fetchZones,
 					fetchZone,fetchDistrict,fetchUpazila,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,
 					getCustomerBillInfo,downloadMeteredBill, printLedger, downloadNonMeteredBill,clearnessCertificateHome,clearnessCertificateInfo, clearnessCertificateInfoPrePrinted, clearnessUnderCertificateInfo,
 					getBillInfo,payInfo,getIpgConfirmationPage,receiveIpgResponse,getiPgDetailInfo,payIpgBill,downloadIPGreceipt;
@@ -29,7 +29,7 @@
 					<param name="roleActions">*: CustomError,index,home,gridRecordFetcher,fetchAllRoleTypes,fetchCustomerCategory,
 												 blankPage,updateCustomerNote,
 												 fetchBanks,fetchBranches,fetchZones,fetchAccounts,fetchMohollahs,
-												 fileUploader,addNewForm,dashBoard,checkValidity,logout,login,mpgDashboard, websiteView, 
+												 fileUploader,addNewForm,dashBoard,checkValidity,logout,login,mpgDashboard, mpgBank, websiteView, 
 												 valiateCategoryId,getServerMessage,crudOperations,fetchZone,fetchDivision,fetchDistrict,fetchUpazila,
 												 getCustomerBillInfo,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,
 												 getBillInfo,payInfo,getIpgConfirmationPage,receiveIpgResponse,getiPgDetailInfo,payIpgBill,downloadIPGreceipt;
@@ -45,7 +45,7 @@
 -								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,deleteCustomerCollectionHome,
 								 demandNoteDataEntry,saveDemandNote,viewCustomer,mpg_coll_dtl_report,
 								 saveDeposit,editDeposit,deleteDeposit,getDepositLedger,getConnectionLedger,
-								 getSecurityAndOtherDepositList,mpgDashboard,fetchMPGcollections,mpg_coll_sum_report,
+								 getSecurityAndOtherDepositList,mpgDashboard, mpgBank,fetchMPGcollections,mpg_coll_sum_report,
 								 getDepositDetail,getNewDepositForm,getDepositFormEditMode,securityDepositExpList,
 								 
 								 saveConnectionInfo,getDefaultSurchargePayWithin, ministryCollectionDueHome, mixedCustomerInfoHome,,
@@ -71,7 +71,7 @@
 								 bankGarantieManagementHome,saveGankGarantieExpireExtentionInfo,
 								 customerTypeChangeHome,saveCustomerTypeChangeInfo,
 								 
-								 fetchCustomerIdList,
+								 fetchCustomerIdList,getExceptionReading,
 								 
 								 meterRepairmentHome,saveMeterRepairmentInfo,getRepairInfo,
 								 meterReplacementHome,saveMeterReplacementInfo,getMeterReplacementInfo,deleteMeterReplacementInfo,
@@ -79,14 +79,14 @@
 								 meterReadingHome,saveMeterReading,fetchMeterReading,deleteMeterReading,getMeterReadingInfo,
 								 
 								 supplyOffHome,saveSupplyOff,billCreationHome,
-								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
+								 processBillException,processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,editTariffMargin,
 								 billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
 								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection, saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveAdvancedCollection,checkDueAmount,saveMultiMonthCollection,
 								 getBillingInfo,getGasPrice,currentMonthBillCollection,saveCurrentMonthBillWithCollection,
 								 getOpeningBalance,
-								 saveBillingInfo,addNewUser,generateBill,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,downloadInstallmentBill,approveBillByBillId,approveAllBill,
+								 saveBillingInfo,createMpgUser,addNewUser,generateBill,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,downloadInstallmentBill,approveBillByBillId,approveAllBill,
 								 holidayHome,getHolidays,getNewHolidayForm,saveHoliday,fetchHolidayList,deleteHoliday,
 								 updateHome,updateHoliday,fetchAreas,fetchDesignations,fetchOrgDivisions,fetchOrgDepartments,
 								 fetchOrgSections,
@@ -106,7 +106,7 @@
 								 monthlyCollectionStmntReport,FeesCollectionStmntReport,CodelessCollectionReport, ministryCollectionReport, ministryCollectionDetails, freedomFighterInfoForm,freedomFighterCollectionInfoForm,CashAndBGReportsInfoForm, ministryCollectionDetailsView, collectionReportHome,codelessCollectionReportForm, ministryCollectionReportForm, feesCollectionReportHome,,nonMeterBillingSummeryHome,nonMeterBillSummeryReport,salesSummaryHome,monthlySalesSummaryReport,
 								 securityAddjustHome,securityAdjustInfo,jvHome,jvInfo,certificationSummeryHome,certificationSummeryReport,billPreviewHome,freedomFighterInfo, freedomFighterCollection, CashAndBGReports,securityLedgerInfoReport, BGforIndividual, billPreviewInfo,,
 								 
-								 approveCC,downloadIPGreceipt,balancingReport2,
+								 approveCC,downloadIPGreceipt,balancingReport2Action, balancingReport2,
 								 
 								 getDuesListByString,isDefaulterOrNot,marginCalculationInfo,
 								 saveGasPurchaseInfo,gasPurchaseHome,bankbook,addMoreReconcilationHome,bankBookInfo,bankBookReportHome,variousMarginHome,variousMarginInfo,gasConsumptionHome,gasConsumptionInfo,
@@ -137,7 +137,7 @@
 								 ownershipChange,updateOwnershipInfo,updateCustomerInformation,editCustomerInfoHome,updateCustomerInfo, changeCustomerIDaction, getDueBillList,
 								 validateCustomerId,getDepositTypeList,newMeter,getMeterInfo,areaWiseAdvCollectionHome, getDepositInfo,getApplianceInfoPlain,getApplianceInfo,
 								 								 								
-								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,getCollectionLedger,balancingReport2,
+								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,getCollectionLedger,balancingReport2Action, balancingReport2,
 								 saveDisconnInfo,saveReconnInfo,noteView,updateCustomerNote,
 -								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,
 								 demandNoteDataEntry,saveDemandNote,viewCustomer,fetchCustomerCollection4Delete,
@@ -176,7 +176,7 @@
 								 meterReadingHome,saveMeterReading,fetchMeterReading,deleteMeterReading,getMeterReadingInfo,
 								 
 								 supplyOffHome,saveSupplyOff,billCreationHome,
-								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
+								 processBillException,processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
 								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveMultiMonthCollection,saveAdvancedCollection,checkDueAmount,
@@ -205,7 +205,7 @@
 								 areaSecurityHome,areaSecurityInfo,salesjvHome,salesjvInfo,purchasejvHome,purchasejvInfo,tdsjvHome,tdsjvInfo,totalSecurityHome,totalSecurityInfo,sgHome,sgInfo,bgHome,bgInfo,avalueHome,avalueInfo,
 								 bapexHome,bapexInfo,distHome,distInfo,dwmbHome,dwmbInfo,gdfHome,gdfInfo,pdfHome,pdfInfo,gtclHome,gtclInfo,,billPreviewHome,freedomFighterInfo, freedomFighterCollection, CashAndBGReports, securityLedgerInfoReport, BGforIndividual, billPreviewInfo,freedomFighterCollection, CashAndBGReports, 
 								 
-								 approveCC,
+								 approveCC,getExceptionReading,
 								 
 								 getDuesListByString,isDefaulterOrNot,marginCalculationInfo,
 								 saveGasPurchaseInfo,gasPurchaseHome,bankbook,addMoreReconcilationHome,bankBookInfo,bankBookReportHome,variousMarginHome,variousMarginInfo,gasConsumptionHome,gasConsumptionInfo,
@@ -228,7 +228,7 @@
 								 								 								
 								 getCustomerInfoAsJson,getMeterListAsJson,getMeterInfoAsJson,ministryCollectionDueHome, mixedCustomerInfoHome,,
 								 saveDisconnInfo,saveReconnInfo,noteView,updateCustomerNote,
--								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,getCollectionLedger,balancingReport2,
+-								 getMeterWithDisconnectInfoAsJson,downloadDemandNote,getCollectionLedger,balancingReport2Action, balancingReport2,
 								 demandNoteDataEntry,saveDemandNote,viewCustomer,
 								 saveDeposit,editDeposit,deleteDeposit,getDepositLedger,getConnectionLedger,
 								 getSecurityAndOtherDepositList,ministryCollDueReport,
@@ -263,7 +263,7 @@
 								 meterReadingHome,saveMeterReading,fetchMeterReading,deleteMeterReading,getMeterReadingInfo,
 								 
 								 supplyOffHome,saveSupplyOff,billCreationHome,
-								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
+								 processBillException,processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
 								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveMultiMonthCollection,saveAdvancedCollection,checkDueAmount,
@@ -326,7 +326,7 @@
 								 
 								 saveConnectionInfo,getDefaultSurchargePayWithin,ministryCollDueReport,noteView,
 								 
-								 getCustomerList,getConnectionLedgerGrid, getCustomerLedger,processCustomerLedgerBalance,balancingReport2,
+								 getCustomerList,getConnectionLedgerGrid, getCustomerLedger,processCustomerLedgerBalance,balancingReport2Action, balancingReport2,
 								 
 								 meterInformationHome,saveMeterInfo,deleteMeter,meterEditStatusCheck,
 								 meterDisconnectionHome,saveMeterDisconnInfo,getMeterDisconnInfo,deleteMeterDisconnInfo,
@@ -353,14 +353,14 @@
 								 meterReadingHome,saveMeterReading,fetchMeterReading,deleteMeterReading,getMeterReadingInfo,
 								 
 								 supplyOffHome,saveSupplyOff,billCreationHome,
-								 processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
+								 processBillException,processBill,editSurcharge,showBillEvents,getApproxTotalBillingCount,getProcessedTotalBillingCount,
 								 unlockDatabase,billProcessHome,billAdjustmentOtherHome,salesAdjustmentHome,billAdjustmentOtherNonMeterHome, billDelete, searchIndividualBill,getBillInfoForAdjustment,getBillInfoForNonMeterSalesAdjustment,getOthersAmountInfo,saveAdjustmentInfo,saveNonMeterSalesAdjustmentInfo,saveSalesAdjustmentInfo,saveOthersAmountForBilling,
 								 billCollectionHome,advancedCollectionHome,codelessCollectionHome,adjustmentCollectionHome,installmentCollectionHome,getCustInfo4Collection,getBillInfo4Collection,getBillInfo4CollectionAdj,saveMinistryBillCollection, saveBillCollection,saveBillCollectionAdj,saveMultiCollection,getTotalCollectionByDateAccount,
 								 getCollectionInfo,deleteBillingCollection,getCollectionInfoByCustomerIdBillingMonthYear,multiCollectionDelete,multiCollection,saveMultiMonthCollection,saveAdvancedCollection,checkDueAmount,
 								 getBillingInfo,getGasPrice,currentMonthBillCollection,saveCurrentMonthBillWithCollection,installmentBillingHome,saveInstallments,getBillInstallments,
 								 installmentCollection,saveInstallmentCollection,
 								 
-								 saveBillingInfo,addNewUser,generateBill,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,downloadInstallmentBill,approveBillByBillId,approveAllBill,
+								 saveBillingInfo, addNewUser,generateBill,downloadMeteredBill, deleteBill, printLedger, downloadNonMeteredBill,BillPreview,downloadInstallmentBill,approveBillByBillId,approveAllBill,
 								 holidayHome,getHolidays,getNewHolidayForm,saveHoliday,fetchHolidayList,deleteHoliday,
 								 updateHome,updateHoliday,fetchAreas,fetchDesignations,fetchOrgDivisions,fetchOrgDepartments,
 								 fetchOrgSections,
@@ -415,8 +415,11 @@
 				    			changePasswordHome,changePassword,resetUserPassword,mixedCustomerInfoHome,downloadIPGreceipt;  
 				     
 				     Ipg User : getiPgDetailInfo, getIpgConfirmationPage, finalIpgVerification,downloadIPGreceipt;
-				     MPG:  dashBoard,userDashBoard,themeSelection,dashBoardContent,
+				     MPG:  dashBoard,userDashBoard,themeSelection,dashBoardContent,createMpgUser,
 				     		fetchMPGcollections,mpg_coll_sum_report_area_wise,mpg_coll_sum_report,mpg_coll_dtl_report;	
+				     		
+				     BANK:  dashBoard,userDashBoard,themeSelection,dashBoardContent,checkDueAmount,getDuesListByString,saveBankCollection,checkTotalDueAmount,getFromMonthToMonth,
+				     		bankCollectionHomeNM,fetchBranches,fetchAccounts,getTotalCollectionByDateAccount,getApplianceInfoPlain,getCustInfo4Collection,getDuesListByString;		
 				     
 				      
 					</param>
@@ -548,7 +551,7 @@
 		<result name="sales-user">/WEB-INF/jsp/dashboard/Content-SalesUser.jsp</result>
 		<result name="assistant-manager">/WEB-INF/jsp/dashboard/Content-SuperAdmin.jsp</result>
 		<result name="manager">/WEB-INF/jsp/dashboard/Content-SuperAdmin.jsp</result>
-		<result name="bank-user">/WEB-INF/jsp/dashboard/Content-Bank.jsp</result>
+		<result name="bank">/WEB-INF/jsp/dashboard/Content-Bank.jsp</result>
 	</action>
 	
 	<action name="gridRecordFetcher" class="org.jgtdsl.actions.GridRecordFetcher">
@@ -659,6 +662,13 @@
 				<param name="inputName">inputStream</param>
 		</result>
 	</action>
+	
+	<action name="getExceptionReading" class="org.jgtdsl.actions.MeterReading" method="getExceptionReading">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
 		 
 	<action name="supplyOffHome" class="org.jgtdsl.actions.SupplyOff" method="supplyOffHome">
 		<result name="success">/WEB-INF/jsp/supplyoff/SupplyOffEntryForm.jsp</result>		
@@ -670,8 +680,10 @@
 		</result>
 	</action>		
 	
+		
 	<action name="billCreationHome" class="org.jgtdsl.actions.Billing" method="billCreationHome">
 		<result name="metered">/WEB-INF/jsp/billing/BillCreationMetered.jsp</result>
+		<result name="metered_LfargeHolcim">/WEB-INF/jsp/billing/Billing_for_special_case.jsp</result>
 		<result name="nonmetered">/WEB-INF/jsp/billing/BillCreationNonMetered.jsp</result>
 		<result name="installment">/WEB-INF/jsp/billing/InstallmentBillPrinting.jsp</result>
 		<result name="ministry">/WEB-INF/jsp/billing/BillCreationMinistry.jsp</result>
@@ -686,6 +698,13 @@
 	</action>
 	
 	<action name="processBill" class="org.jgtdsl.actions.Billing" method="processBill">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
+	
+	<action name="processBillException" class="org.jgtdsl.actions.Billing" method="processBillException">
 		<result type="stream">
 				<param name="contentType">json</param>
 				<param name="inputName">inputStream</param>
@@ -993,6 +1012,10 @@
 		<result name="success">/WEB-INF/jsp/collection/AdvancedCollection.jsp</result>
 	</action>
 	
+	<action name="bankCollectionHomeNM">
+		<result name="success">/WEB-INF/jsp/collection/bankCollectionHomeNM.jsp</result>
+	</action>
+	
 	<action name="codelessCollectionHome">
 		<result name="success">/WEB-INF/jsp/collection/CodelessCollection.jsp</result>
 	</action>
@@ -1209,7 +1232,28 @@
 		</result>
 	</action>	
 	
+	<action name="saveBankCollection" class="org.jgtdsl.actions.Collection" method="saveBankCollection">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>	
+	
 	<action name="checkDueAmount" class="org.jgtdsl.actions.Collection" method="checkDueAmount">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
+	
+	<action name="checkTotalDueAmount" class="org.jgtdsl.actions.Collection" method="checkTotalDueAmount">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
+	
+	<action name="getFromMonthToMonth" class="org.jgtdsl.actions.Collection" method="getFromMonthToMonth">
 		<result type="stream">
 				<param name="contentType">json</param>
 				<param name="inputName">inputStream</param>
@@ -1354,6 +1398,13 @@
 		</result>
 	</action>
 
+
+	<action name="createMpgUser" class="org.jgtdsl.actions.bank.MpgBank" method="createMpgUser">
+		<result type="stream">
+				<param name="contentType">json</param>
+				<param name="inputName">inputStream</param>
+		</result>
+	</action>
 	
 	<action name="addNewForm">
 		<result name="success">/WEB-INF/jsp/AddNewForm.jsp</result>
@@ -1612,6 +1663,11 @@
 	<action name="mpgDashboard" class="org.jgtdsl.actions.bank.BankTransaction" method="mpgDashboardHome">
 		<result name="success">/WEB-INF/jsp/collection/mpgDashboardHome.jsp</result>
 	</action>
+	
+	<action name="mpgBank" class="org.jgtdsl.actions.bank.MpgBank" method="mpgBank">
+		<result name="success">/WEB-INF/jsp/bank/mpgBankHome.jsp</result>
+	</action>
+	
 	<action name="transactionAuthorization" class="org.jgtdsl.actions.bank.BankTransaction" method="transactionAuthorization">
 		<result name="success">/WEB-INF/jsp/bank/TransactionAuthorization.jsp</result>
 	</action>
@@ -1807,6 +1863,11 @@
 				<param name="inputName">inputStream</param>
 		</result>
 	</action>
+	
+	<action name="balancingReport2Action">
+       <result name="success">/WEB-INF/jsp/reports/balancingReportHome2.jsp</result>
+    </action>
+
 	
 	<!-- ****************tanmay***************** -->
 	

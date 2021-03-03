@@ -66,6 +66,7 @@ public class BGReport extends BaseAction {
 			PdfWriter.getInstance(document, baos).setPageEvent(eEvent);
 
 			document.open();
+			///test comment
 
 			PdfPTable headerTable = new PdfPTable(3);
 

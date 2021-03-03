@@ -187,6 +187,20 @@ public class Collection extends BaseAction{
 		setJsonResponse(response);
 		return null;
 	}
+	
+	public String checkTotalDueAmount(){
+		CollectionService collectionService=new CollectionService();
+		ResponseDTO response=collectionService.checkBankCollection(collection);
+		setJsonResponse(response);
+		return null;
+	}
+	
+	public String getFromMonthToMonth(){
+		CollectionService collectionService=new CollectionService();
+		ResponseDTO response=collectionService.getFromMonthToMonth(collection);
+		setJsonResponse(response);
+		return null;
+	}
 	//
 	
 
@@ -197,6 +211,20 @@ public class Collection extends BaseAction{
 		return null;
 	}
 	
+	public String saveBankCollection(){
+		CollectionService collectionService=new CollectionService();
+		ResponseDTO response= new ResponseDTO();
+		String isMeteredStatus=collection.getCustomer().getConnectionInfo().getIsMetered_str();
+		
+		if(isMeteredStatus.equalsIgnoreCase("1")){
+			response=collectionService.saveBillCollection(collection,mobilePhoneUpdate);
+		}else{
+			response=collectionService.saveBankCollection(collection);
+		}	 
+		 
+		setJsonResponse(response);
+		return null;
+	}
 	
 	
 	

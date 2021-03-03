@@ -31,9 +31,45 @@ public class BillingParamDTO {
 	private String remarks;
 	
 	private String bill_id;
-	private String reProcess;
+	private String reProcess;	
+	
+	private String bill_due_date_w_sur;	
+	private String gasBill;
+	private String surcharge;
+	private String demandCharge;
+	private String hnvBill;
 	
 	
+	public String getHnvBill() {
+		return hnvBill;
+	}
+	public void setHnvBill(String hnvBill) {
+		this.hnvBill = hnvBill;
+	}
+	public String getBill_due_date_w_sur() {
+		return bill_due_date_w_sur;
+	}
+	public void setBill_due_date_w_sur(String bill_due_date_w_sur) {
+		this.bill_due_date_w_sur = bill_due_date_w_sur;
+	}
+	public String getGasBill() {
+		return gasBill;
+	}
+	public void setGasBill(String gasBill) {
+		this.gasBill = gasBill;
+	}
+	public String getSurcharge() {
+		return surcharge;
+	}
+	public void setSurcharge(String surcharge) {
+		this.surcharge = surcharge;
+	}
+	public String getDemandCharge() {
+		return demandCharge;
+	}
+	public void setDemandCharge(String demandCharge) {
+		this.demandCharge = demandCharge;
+	}
 	public String getBill_due_date() {
 		return bill_due_date;
 	}

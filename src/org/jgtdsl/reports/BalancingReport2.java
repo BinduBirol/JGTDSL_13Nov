@@ -3,18 +3,26 @@ package org.jgtdsl.reports;
 
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
 import org.jgtdsl.actions.BaseAction;
+import org.jgtdsl.dto.BalancingReportDTO;
+import org.jgtdsl.dto.MeterReadingReportDTO;
 import org.jgtdsl.dto.UserDTO;
 import org.jgtdsl.enums.Area;
 import org.jgtdsl.enums.Month;
 import org.jgtdsl.models.AreaService;
+import org.jgtdsl.utils.connection.ConnectionManager;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -24,6 +32,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -38,6 +47,10 @@ private static final long serialVersionUID = 1L;
     private String report_for; 
     private static String category_name;
     
+	private  String year;
+    
+  
+    
     AreaService aa=new AreaService();
 	
 	public ServletContext servlet;
@@ -51,8 +64,10 @@ private static final long serialVersionUID = 1L;
 	static Font font1 = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 	static Font font3 = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
 	static Font font2 = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL);
-	static DecimalFormat taka_format = new DecimalFormat("#,##,##,##,##,##0.00");
-	static DecimalFormat consumption_format = new DecimalFormat("##########0.000");
+	Font red = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, BaseColor.RED);
+	DecimalFormat taka_format = new DecimalFormat("#,##,##,##,##,##0.00");
+	DecimalFormat consumption_format = new DecimalFormat("##########0.000");
+	static DecimalFormat number_format = new DecimalFormat("###########0.0");
 	UserDTO loggedInUser=(UserDTO) ServletActionContext.getRequest().getSession().getAttribute("user");
 	
 	ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -60,6 +75,7 @@ private static final long serialVersionUID = 1L;
 	
 	
 	public String execute() throws Exception {
+		area= new String(loggedInUser.getArea_id());
 		String fileName="balancingReport2.pdf";
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Document document = new Document(PageSize.LEGAL.rotate());
@@ -107,7 +123,7 @@ private static final long serialVersionUID = 1L;
 								pcell.setBorder(Rectangle.NO_BORDER);
 								mTable.addCell(pcell);
 								
-								Chunk chunk1 = new Chunk("Regional Distribution Office :",font2);
+								Chunk chunk1 = new Chunk("Regional Distribution Office :"+String.valueOf(String.valueOf(Area.values()[Integer.valueOf(area)-1])),font2);
 							//	Chunk chunk2 = new Chunk(String.valueOf(Area.values()[Integer.valueOf(area)-1]),font3);
 								Paragraph p = new Paragraph(); 
 								p.add(chunk1);
@@ -156,7 +172,7 @@ private static final long serialVersionUID = 1L;
 								
 								
 								datatable1.setWidthPercentage(100);
-								datatable1.setWidths(new float[] {15,15,15,15,15,15,15,15,15,15,15});
+								datatable1.setWidths(new float[] {10,15,20,10,15,15,15,15,15,15,20});
 								
 								
 								
@@ -231,64 +247,101 @@ private static final long serialVersionUID = 1L;
 								pcell.setRowspan(2);
 								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
 								datatable1.addCell(pcell);
+								/////////////////////////////////////////////////////
+			
 								
 								
-								pcell = new PdfPCell(new Paragraph(("1"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
+								ArrayList<MeterReadingReportDTO> category= new ArrayList<MeterReadingReportDTO>();
 								
-								pcell = new PdfPCell(new Paragraph(("non-metered Domestic"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
+								category= getcategory();
+								int sl=1;
 								
-								pcell = new PdfPCell(new Paragraph(("connected"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setRowspan(3);
-								datatable1.addCell(pcell);
+								for(MeterReadingReportDTO x: category){
+									
+									for(int i=0; i<=1;i++){										
+										
+										pcell = new PdfPCell(new Paragraph((String.valueOf(sl)),ReportUtil.f11));
+										pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+										pcell.setColspan(1);
+										datatable1.addCell(pcell);
+										
+										pcell = new PdfPCell(new Paragraph((x.getCustomer_category_name()),ReportUtil.f11));
+										pcell.setHorizontalAlignment(Element.ALIGN_LEFT);
+										pcell.setColspan(1);
+										datatable1.addCell(pcell);
+										
+										ArrayList<BalancingReportDTO> getdata= new ArrayList<BalancingReportDTO>();
+										getdata= getbalancingReport2(i, x.getCategory_id(),area);
+										
+										for(BalancingReportDTO y:getdata){
+											
+											if(i==0){
+											
+												pcell = new PdfPCell(new Paragraph((y.getFlag()),red));
+												pcell.setHorizontalAlignment(Element.ALIGN_LEFT);
+												pcell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+												pcell.setRowspan(1);
+												datatable1.addCell(pcell);
+											}else{
+												pcell = new PdfPCell(new Paragraph((y.getFlag()),ReportUtil.f11));
+												pcell.setHorizontalAlignment(Element.ALIGN_LEFT);
+												pcell.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+												pcell.setRowspan(1);
+												datatable1.addCell(pcell);
+											}
+											
+											
+											pcell = new PdfPCell(new Paragraph((y.getCustomer_count()),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph((String.valueOf(y.getsBurner())),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph((String.valueOf(y.getdBurner())),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph((String.valueOf(0)),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph((y.getMax_load()),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph(taka_format.format(y.getCash()),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph(taka_format.format(y.getBg()),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);
+											
+											pcell = new PdfPCell(new Paragraph(taka_format.format(y.getBalance()),ReportUtil.f11));
+											pcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+											pcell.setColspan(1);
+											datatable1.addCell(pcell);										
+											
+											sl++;
+										}
+										
+									}
+									
+									
+								}
+								datatable1.setHeaderRows(3);
 								
-								pcell = new PdfPCell(new Paragraph(("4"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
 								
-								pcell = new PdfPCell(new Paragraph(("5"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
 								
-								pcell = new PdfPCell(new Paragraph(("6"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
-								
-								pcell = new PdfPCell(new Paragraph(("7"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
-								
-								pcell = new PdfPCell(new Paragraph(("8"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
-								
-								pcell = new PdfPCell(new Paragraph(("9"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
-								
-								pcell = new PdfPCell(new Paragraph(("10"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
-								
-								pcell = new PdfPCell(new Paragraph(("11"),ReportUtil.f11));
-								pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-								pcell.setColspan(1);
-								datatable1.addCell(pcell);
-								
-						
 								document.add(datatable1);
 								
 								
@@ -305,9 +358,135 @@ private static final long serialVersionUID = 1L;
 	}
 
 
+	Statement st=null;					
+	ResultSet rs=null;
+	Connection conn = ConnectionManager.getConnection();
 
+	public  ArrayList<BalancingReportDTO> getbalancingReport2(int status, String cat, String area)
+	{
+		
+		ArrayList<BalancingReportDTO> nonMeterInfo=null;			
+		nonMeterInfo= new ArrayList<BalancingReportDTO>();
+		String sql= "";
+		
+		String max_l="0";
+		String sBurner="0";
+		String dBurner="0";
+		String stat= "";
+		
+		if(status==0)stat="'DISCONNECTED'";
+		if(status==1)stat="'CONNECTED'";
+		
+		if(cat.equalsIgnoreCase("01")||cat.equalsIgnoreCase("09")){			
+			sBurner= "SUM (GETBURNERBYINDX (mv.customer_id, 's'))";
+			dBurner= "SUM (GETBURNERBYINDX (mv.customer_id, 'd'))";
+		}else{
+			max_l= " SUM (MAX_LOAD)";
+		}
+		
+		sql= 
+				"  SELECT COUNT (*) COUNT, " +
+				stat+ " status, " +
+				max_l+ " max_load, " +
+				"         SUM (brh.balance) balance, " +
+				"         SUM (getCashOrBG (mv.customer_id, 'cash')) cash, " +
+				"         SUM (getCashOrBG (mv.customer_id, 'bg')) bg, " +
+				sBurner+ " single, " +
+				dBurner+ " double " +
+				"    FROM MVIEW_CUSTOMER_INFO mv, BALANCING_REPORT_HELPER brh " +
+				"   WHERE     brh.status =  " + status+
+				"         AND AREA_ID =  '" + area +"' "+
+				"         AND BRH.CUSTOMER_ID = MV.CUSTOMER_ID " +
+				"         AND MV.CATEGORY_ID = '" +cat+"' "+
+				"         AND year =  "+ year;
 
+		//System.out.println(sql);
+		
+		try {
+	
+			 conn = ConnectionManager.getConnection();
+			 st=conn.createStatement();						
+			 rs=st.executeQuery(sql);
+			 
+			 while(rs.next()){
+				// if(Integer.parseInt(rs.getString("COUNT"))>0){
+				 
+					 BalancingReportDTO balancingReportDTO=new BalancingReportDTO();
+					 balancingReportDTO.setFlag(rs.getString("STATUS"));
+					 balancingReportDTO.setCustomer_count(rs.getString("COUNT"));
+					 balancingReportDTO.setsBurner(rs.getDouble("single"));
+					 balancingReportDTO.setdBurner(rs.getDouble("double"));
+					 balancingReportDTO.setoBurner(0.0d);
+					 balancingReportDTO.setCash(rs.getDouble("cash"));
+					 balancingReportDTO.setBg(rs.getDouble("bg"));
+					 balancingReportDTO.setBalance(rs.getLong("BALANCE"));
+					 balancingReportDTO.setMax_load(rs.getString("max_load"));
+					 
+					 nonMeterInfo.add(balancingReportDTO);
+				 //} 
+				 
+			 }
+			
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		finally {
+			try {
+				st.close();
+				conn.close();
+				ConnectionManager.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			st = null;
+			conn = null;
+	}
+		
+	return nonMeterInfo;
+	}
 
+public ArrayList<MeterReadingReportDTO> getcategory(){
+		
+
+		ArrayList<MeterReadingReportDTO> catInfo=null;			
+		catInfo= new ArrayList<MeterReadingReportDTO>();
+		
+		String sql= " select * from MST_CUSTOMER_CATEGORY order by CATEGORY_ID ";
+		
+		try {
+
+			 conn = ConnectionManager.getConnection();
+			 st=conn.createStatement();						
+			 rs=st.executeQuery(sql);
+			 
+			 while(rs.next()){
+				 
+				 MeterReadingReportDTO meterReadingReportDTO=new MeterReadingReportDTO();
+				 meterReadingReportDTO.setCategory_id(rs.getString("CATEGORY_ID"));
+				 meterReadingReportDTO.setCustomer_category_name(rs.getString("CATEGORY_NAME"));
+				 
+				 catInfo.add(meterReadingReportDTO);			
+				 
+			 }
+			
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		finally {
+			try {
+				st.close();
+				conn.close();
+				ConnectionManager.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			st = null;
+			conn = null;
+		}
+			
+		return catInfo;
+		
+	}
 
 
 
@@ -404,6 +583,15 @@ private static final long serialVersionUID = 1L;
 		this.servletContext = servletContext;
 	}
 
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	
 	
 	
 }

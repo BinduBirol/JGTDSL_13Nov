@@ -1,6 +1,7 @@
 package org.jgtdsl.reports;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -190,6 +191,86 @@ public class MaximumLoadExceedReport extends BaseAction {
 
 			int expireListSize=loadExceedCustomerList.size();
 			String previousCustomerCategoryName=new String("");
+			
+if(expireListSize==0){
+				
+				ptable = new PdfPTable(7);
+				ptable.setWidthPercentage(100);
+				ptable.setWidths(new float[]{15,30,50,30,30,30,30});
+				ptable.setSpacingBefore(10);
+				
+				
+				pcell=new PdfPCell(new Paragraph(""));
+				pcell.setMinimumHeight(18f);
+				pcell.setColspan(2);
+				pcell.setBorder(0);
+				pcell.setHorizontalAlignment(Element.ALIGN_LEFT);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);			
+				ptable.addCell(pcell);
+				
+				pcell=new PdfPCell(new Paragraph("",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setColspan(5);
+				pcell.setBorder(0);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);			
+				ptable.addCell(pcell);
+				
+								
+				
+				pcell=new PdfPCell(new Paragraph("Sr.No",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);			
+				ptable.addCell(pcell);
+				
+				
+				pcell=new PdfPCell(new Paragraph("Customer ID",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				ptable.addCell(pcell);
+				
+				pcell=new PdfPCell(new Paragraph("Customer Name",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);			
+				ptable.addCell(pcell);
+				
+				
+				
+				pcell=new PdfPCell(new Paragraph("Monthly Gas Consumption(SCM)",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);			
+				ptable.addCell(pcell);
+				
+				pcell=new PdfPCell(new Paragraph("Monthly Contructual Load(SCM)",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				ptable.addCell(pcell);
+				
+				pcell=new PdfPCell(new Paragraph("Difference",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				ptable.addCell(pcell);
+				
+				pcell=new PdfPCell(new Paragraph("Gas use more Than "+percentage_range+"% from MCL ",ReportUtil.f9B));
+				pcell.setMinimumHeight(18f);
+				pcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				pcell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				ptable.addCell(pcell);
+				
+				
+			}
+			
+			
+			
+			
+			
+			
 			
 			for(int i=0;i<expireListSize;i++)
 			{

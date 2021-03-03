@@ -1386,7 +1386,7 @@ public class DepositService {
 				"         DECODE (DEPOSIT_TYPE,  0, 'CASH BANK',  1, 'BANK GUARANTEE') " +
 				"            deposit_type " +
 				"    FROM mst_deposit " +
-				"   WHERE customer_id = ? AND DEPOSIT_PURPOSE IN (1, 2) " +
+				"   WHERE customer_id = ? AND DEPOSIT_PURPOSE IN (1, 2,3) " +
 				" GROUP BY DEPOSIT_TYPE " ;
  
 		PreparedStatement stmt = null;

@@ -40,6 +40,7 @@ font-size: 12px;
 												<input type="radio" value="category_type_wise" id="by_category_type" name="report_for" onclick="checkType(this.id)" /> Category Type Wise&nbsp;&nbsp;&nbsp;
 												
 												<s:if test="#session.role=='RDD'">
+												<input type="radio" value="combo_aday_bokeya" id="combo_by_aday_bokeya" name="report_for" onclick="checkType(this.id)" />Combined Collection & Dues &nbsp;&nbsp;&nbsp;
 												<input type="radio" value="category_type_wise_f_all_area" id="by_category_type_f_all" name="report_for" onclick="checkType(this.id)" />&nbsp;Combined area Category Type Wise&nbsp;&nbsp;&nbsp;
 												</s:if>
 												

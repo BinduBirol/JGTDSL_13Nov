@@ -276,6 +276,8 @@
 	  </result> 
 	</action>
 	
+	
+	
 	<action name="monthlyCollectionStmntReport"  class="org.jgtdsl.reports.MonthlyCollectionReport">
 		<result type="stream">
 				<param name="contentType">application/pdf</param>

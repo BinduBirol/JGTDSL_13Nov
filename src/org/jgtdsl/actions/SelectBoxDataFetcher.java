@@ -580,20 +580,20 @@ public String fetchZones(){
 			}
 			else if(type.equalsIgnoreCase("metered_connected")){
 				 
-				if(CacheUtil.getListFromCache("ALL_METERED_CONNECTED_CUSTOMER_ID_"+area_str, AutoCompleteObject.class)==null){
-					CacheUtil.setListToCache(Utils.constructCacheKey("ALL_METERED_CONNECTED_CUSTOMER_ID_"+area_str),customerService.getCustomerListForAutoComplete("METERED_CONNECTED",area_str));
-					allCustomer= CacheUtil.getListFromCache("ALL_METERED_CONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class);
+				if(CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD"+area_str, AutoCompleteObject.class)==null){
+					CacheUtil.setListToCache(Utils.constructCacheKey("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD"+area_str),customerService.getCustomerListForAutoComplete("METERED_CONNECTED",area_str));
+					allCustomer= CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD"+area_str,AutoCompleteObject.class);
 				}
 				else					
-					allCustomer=CacheUtil.getListFromCache("ALL_METERED_CONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class); 
+					allCustomer=CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD"+area_str,AutoCompleteObject.class); 
 			}
 			else if(type.equalsIgnoreCase("metered_disconnected")){
-				if(CacheUtil.getListFromCache("ALL_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str, AutoCompleteObject.class)==null){
-					CacheUtil.setListToCache(Utils.constructCacheKey("ALL_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str),customerService.getCustomerListForAutoComplete("METERED_DISCONNECTED",area_str));
-					allCustomer= CacheUtil.getListFromCache("ALL_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class);
+				if(CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DDID_"+area_str, AutoCompleteObject.class)==null){
+					CacheUtil.setListToCache(Utils.constructCacheKey("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DDID_"+area_str),customerService.getCustomerListForAutoComplete("METERED_DISCONNECTED",area_str));
+					allCustomer= CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DDID_"+area_str,AutoCompleteObject.class);
 				}
 				else					
-					allCustomer=CacheUtil.getListFromCache("ALL_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class); 
+					allCustomer=CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DDID_"+area_str,AutoCompleteObject.class); 
  
 			}
 			
@@ -607,21 +607,21 @@ public String fetchZones(){
 				
 			}
 			else if(type.equalsIgnoreCase("nonmetered_connected")){
-				if(CacheUtil.getListFromCache("ALL_NON_METERED_CONNECTED_CUSTOMER_ID_"+area_str, AutoCompleteObject.class)==null){
-					CacheUtil.setListToCache(Utils.constructCacheKey("ALL_NON_METERED_CONNECTED_CUSTOMER_ID_"+area_str),customerService.getCustomerListForAutoComplete("NONMETERED_CONNECTED",area_str));
-					allCustomer= CacheUtil.getListFromCache("ALL_NON_METERED_CONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class);
+				if(CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD_ID_"+area_str, AutoCompleteObject.class)==null){
+					CacheUtil.setListToCache(Utils.constructCacheKey("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD_ID_"+area_str),customerService.getCustomerListForAutoComplete("NONMETERED_CONNECTED",area_str));
+					allCustomer= CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD_ID_"+area_str,AutoCompleteObject.class);
 				}
 				else					
-					allCustomer=CacheUtil.getListFromCache("ALL_NON_METERED_CONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class);
+					allCustomer=CacheUtil.getListFromCache("GbHi8bXhDyMP2m1NDUSiYmznAJdJzX36DD_ID_"+area_str,AutoCompleteObject.class);
 				
 			}
 			else if(type.equalsIgnoreCase("nonmetered_disconnected")){
-				if(CacheUtil.getListFromCache("ALL_NON_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str, AutoCompleteObject.class)==null){
-					CacheUtil.setListToCache(Utils.constructCacheKey("ALL_NON_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str),customerService.getCustomerListForAutoComplete("NONMETERED_DISCONNECTED",area_str));
-					allCustomer= CacheUtil.getListFromCache("ALL_NON_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class);
+				if(CacheUtil.getListFromCache("GbHi8bXd2f26VzNJGpBSvCbw9tJ4qbh2CCPSEWY5_"+area_str, AutoCompleteObject.class)==null){
+					CacheUtil.setListToCache(Utils.constructCacheKey("GbHi8bXd2f26VzNJGpBSvCbw9tJ4qbh2CCPSEWY5_"+area_str),customerService.getCustomerListForAutoComplete("NONMETERED_DISCONNECTED",area_str));
+					allCustomer= CacheUtil.getListFromCache("GbHi8bXd2f26VzNJGpBSvCbw9tJ4qbh2CCPSEWY5_"+area_str,AutoCompleteObject.class);
 				}
 				else					
-					allCustomer=CacheUtil.getListFromCache("ALL_NON_METERED_DISCONNECTED_CUSTOMER_ID_"+area_str,AutoCompleteObject.class);
+					allCustomer=CacheUtil.getListFromCache("GbHi8bXd2f26VzNJGpBSvCbw9tJ4qbh2CCPSEWY5_"+area_str,AutoCompleteObject.class);
 				
 			}
 

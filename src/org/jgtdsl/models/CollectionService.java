@@ -385,7 +385,7 @@ public class CollectionService {
 		if(customer.getConnectionInfo().getIsMetered_name().equalsIgnoreCase("Metered"))
 		{
 			if(bill_month.equalsIgnoreCase("") && bill_year.equalsIgnoreCase("")){
-				sql="SELECT bill.*,CALCUALTESURCHARGE_METER(bill_id, '"+collection_date+"')  ACTUAL_SURCHARGE_CAL,NVL (ACTUAL_SURCHARGE, 0) + NVL (BILLED_AMOUNT, 0) + NVL(ADJUSTMENT_AMOUNT,0) ACTUAL_PAYABLE_AMOUNT_CAL " +
+				sql="SELECT bill.*,CALCUALTESURCHARGE_METER(bill_id, '"+collection_date+"')  ACTUAL_SURCHARGE_CAL,CALCUALTESURCHARGE_METER(bill_id, '"+collection_date+"') + NVL (BILLED_AMOUNT, 0) + NVL(ADJUSTMENT_AMOUNT,0) ACTUAL_PAYABLE_AMOUNT_CAL " +
 						"FROM "+tableName+" bill WHERE Customer_Id = ? AND PAYABLE_AMOUNT <> NVL (COLLECTED_AMOUNT, 0) AND Bill_Id IN (SELECT bill_id " +
 						" FROM "+tableName+" WHERE Status = 1 AND Customer_Id = ?) order by bill_month asc" ;
 						/*" Select bill.*,(calcualteSurcharge (bill_id, '"+collection_date+"')) surcharge_per_coll,(calcualteSurcharge(bill_id,'"+collection_date+"')+NVL(ACTUAL_SURCHARGE,0)) ACTUAL_SURCHARGE_CAL,(calcualteSurcharge(bill_id,'"+collection_date+"')+NVL(ACTUAL_SURCHARGE,0)+NVL(BILLED_AMOUNT,0)) ACTUAL_PAYABLE_AMOUNT_CAL From "+tableName+" bill Where Customer_Id=? And  PAYABLE_AMOUNT<>NVL(COLLECTED_AMOUNT,0) " +
@@ -476,8 +476,8 @@ public class CollectionService {
 						collection.setBilled_amount(r.getDouble("BILLED_AMOUNT"));					
 						collection.setVat_rebate_amount(r.getDouble("VAT_REBATE_AMOUNT"));
 						//for fixing sum in form
-						collection.setSurcharge_amount(r.getDouble("SURCHARGE_AMOUNT"));
-						//collection.setSurcharge_amount(r.getDouble("ACTUAL_SURCHARGE_CAL"));
+						//collection.setSurcharge_amount(r.getDouble("SURCHARGE_AMOUNT"));
+						collection.setSurcharge_amount(r.getDouble("ACTUAL_SURCHARGE_CAL"));
 						collection.setAdjustment_amount(r.getDouble("ADJUSTMENT_AMOUNT"));
 						//collection.setPayable_amount(r.getDouble("PAYABLE_AMOUNT"));
 						collection.setPayable_amount(r.getDouble("ACTUAL_PAYABLE_AMOUNT_CAL"));
@@ -814,7 +814,7 @@ public class CollectionService {
 						bank_book_stmt_update_metered.setDouble(1,payableAmount);					
 						bank_book_stmt_update_metered.setDouble(2,meterRent);
 						
-						if((coll_missmatch_amount==tax_am)||(coll_missmatch_amount==to_demand_tax)||(coll_missmatch_amount!=to_de_su_ta_amount)){
+						if((coll_missmatch_amount==tax_am)||(coll_missmatch_amount==to_demand_tax)||(coll_missmatch_amount!=to_sur_tax_amount)){
 							
 							bank_book_stmt_update_metered.setDouble(3,surchargeAmount);
 						}else if((coll_missmatch_amount==to_de_su_ta_amount)||(coll_missmatch_amount==to_sur_tax_amount)){
@@ -1085,7 +1085,51 @@ public class CollectionService {
 	
 	
 	
-	
+public ResponseDTO checkBankCollection(CollectionDTO collection){
+		
+		ResponseDTO response = new ResponseDTO();
+		int response_code=0;
+	 	String response_msg="0#0";
+	 	
+		Connection conn = ConnectionManager.getConnection();
+	 	OracleCallableStatement stmt=null;
+	 	
+	 	try
+		  {	 	   stmt = (OracleCallableStatement) conn.prepareCall(
+					 	  "{ ? = call GET_BILL_AMOUNT_BANK	(?,?) }");
+		    		
+		  			stmt.registerOutParameter(1, java.sql.Types.VARCHAR);
+		    	
+					stmt.setString(2, collection.getCustomer_id());		    		
+		    		stmt.setString(3, collection.getCollection_date());					
+					
+					stmt.executeUpdate();
+
+					response_msg = (stmt.getString(1)).trim();
+					
+					//split and check if any bill is due
+//					String [] arrDebit = response_msg.split("#");
+//					double bill_amount = Double.parseDouble(arrDebit[0]);
+//					double surcharge = Double.parseDouble(arrDebit[1]);
+//					double total = bill_amount + surcharge;
+//					if(total > 0.0)
+//					response_code = 1 ;
+					//end of checking
+					
+					response_code = 1 ;
+					response.setMessasge(response_msg);
+					response.setResponse(response_code==1?true:false);
+	 			
+	 		
+	 		
+	    		    	
+		  } 
+		catch (Exception e){e.printStackTrace();response.setResponse(false);response.setMessasge(e.getMessage());return response;}
+ 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+			{e.printStackTrace();}stmt = null;conn = null;}
+	 	
+		 return response;
+	}
 	
 	
 	
@@ -1198,6 +1242,61 @@ public class CollectionService {
 						response.setMessasge(response_msg);
 						response.setResponse(response_code==1?true:false);
 		 		}
+	 		
+	    		    	
+		  } 
+		catch (Exception e){e.printStackTrace();response.setResponse(false);response.setMessasge(e.getMessage());return response;}
+ 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+			{e.printStackTrace();}stmt = null;conn = null;}
+	 	
+		 return response;
+	}
+	
+public ResponseDTO saveBankCollection(CollectionDTO collection){
+		
+		ResponseDTO response = new ResponseDTO();
+		int response_code=0;
+	 	String response_msg="";
+		
+		Connection conn = ConnectionManager.getConnection();
+	 	OracleCallableStatement stmt=null;
+		
+	 	
+	 	double bank_adv_amount= collection.getAdvanced_amount()+collection.getBank_advance_amount();
+	 
+	 	
+	 	try
+		  {
+	 		
+		 			stmt = (OracleCallableStatement) conn.prepareCall(
+						 	  "{ call ADVANCED_COLLECTION	(?,?,?,?,?,?,?,?,?,?,?,?,?,?) }");
+			    		
+			    	
+			    	
+						stmt.setString(1, collection.getCustomer_id());
+			    		stmt.setString(2, collection.getBank_id());
+			    		stmt.setString(3, collection.getBranch_id());
+			    		stmt.setString(4, collection.getAccount_no());
+			    		stmt.setString(5, collection.getCollection_date());
+			    		stmt.setString(6, loggedInUser.getUserName());
+			    		stmt.setDouble(7, bank_adv_amount);
+			    		stmt.setDouble(8, collection.getSurcharge_amount());
+			    		stmt.setString(9, collection.getFrom_month());
+			    		stmt.setString(10, collection.getFrom_year());
+			    		stmt.setString(11, collection.getTo_month());
+			    		stmt.setString(12, collection.getTo_year());
+			    		
+			    		
+			    		stmt.registerOutParameter(13, java.sql.Types.INTEGER);
+						stmt.registerOutParameter(14, java.sql.Types.VARCHAR);
+						
+						stmt.executeUpdate();
+						response_code = stmt.getInt(13);
+						response_msg = (stmt.getString(14)).trim();
+						
+						response.setMessasge(response_msg);
+						response.setResponse(response_code==1?true:false);
+		 		
 	 		
 	    		    	
 		  } 
@@ -2056,6 +2155,51 @@ public class CollectionService {
 	 		
 	 		return collectionList;		
 		
+	}
+
+	public ResponseDTO getFromMonthToMonth(CollectionDTO collection) {
+		ResponseDTO response = new ResponseDTO();
+		int response_code=0;
+	 	String response_msg="0#0";
+	 	
+		Connection conn = ConnectionManager.getConnection();
+	 	OracleCallableStatement stmt=null;
+	 	
+	 	try
+		  {	 	   stmt = (OracleCallableStatement) conn.prepareCall(
+					 	  "{ ? = call getFromMonthToMonth	(?) }");
+		    		
+		  			stmt.registerOutParameter(1, java.sql.Types.VARCHAR);
+		    	
+					stmt.setString(2, collection.getCustomer_id());		    		
+		    						
+					
+					stmt.executeUpdate();
+
+					response_msg = (stmt.getString(1)).trim();
+					
+					//split and check if any bill is due
+//					String [] arrDebit = response_msg.split("#");
+//					double bill_amount = Double.parseDouble(arrDebit[0]);
+//					double surcharge = Double.parseDouble(arrDebit[1]);
+//					double total = bill_amount + surcharge;
+//					if(total > 0.0)
+//					response_code = 1 ;
+					//end of checking
+					
+					response_code = 1 ;
+					response.setMessasge(response_msg);
+					response.setResponse(response_code==1?true:false);
+	 			
+	 		
+	 		
+	    		    	
+		  } 
+		catch (Exception e){e.printStackTrace();response.setResponse(false);response.setMessasge(e.getMessage());return response;}
+ 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+			{e.printStackTrace();}stmt = null;conn = null;}
+	 	
+		 return response;
 	}
 
 

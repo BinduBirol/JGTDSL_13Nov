@@ -86,6 +86,7 @@
 					<li class="boxY" onclick="ajaxLoad('report_input_div','securityAddjustHome.action')"><span>Security Adjustment Notice</span> </li>
 					<li class="boxY" onclick="ajaxLoad('report_input_div','jvHome.action')"><span>Journal Voucher Report</span> </li>
 					<li class="boxY" onclick="ajaxLoad('report_input_div','balancingReportAction.action')"><span>Balancing Report</span> </li>
+					<li class="boxY" onclick="ajaxLoad('report_input_div','balancingReport2Action.action')"><span>Balancing Report2</span> </li>
 					<li class="boxY" onclick="ajaxLoad('report_input_div','mixedCustomerInfoHome.action')"><span>Mixed Customer list</span> </li>
 					<li class="boxY" onclick="ajaxLoad('report_input_div','ministryCollectionDueHome.action')"><span>Ministry collection-due</span> </li>
 					<%-- <li class="boxY" onclick="ajaxLoad('report_input_div','securityNoticeHome.action')"><span>Security Notice Report</span> </li> --%>

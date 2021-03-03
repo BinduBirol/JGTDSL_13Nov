@@ -113,6 +113,10 @@ public class CollectionDTO {
 private String type;
 private String total_deposit;
 private String depoDate;
+//for bank collection
+private double bank_advance_amount;
+
+
 public String getDepoDate() {
 	return depoDate;
 }
@@ -141,6 +145,14 @@ public void setTotal_deposit(String total_deposit) {
 	
 	
 
+
+	public double getBank_advance_amount() {
+	return bank_advance_amount;
+}
+
+public void setBank_advance_amount(double bank_advance_amount) {
+	this.bank_advance_amount = bank_advance_amount;
+}
 
 	public String getSurcharge() {
 		return surcharge;

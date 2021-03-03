@@ -125,8 +125,8 @@ public class MaxLoadExceedNotice extends BaseAction {
 	    stamp.addAnnotation(link, 1);
 		
 		over.beginText();
-		ArrayList<LoadExceedReportDTO> loadExceedCustomerList=getInfoindividual();
-		
+		ArrayList<LoadExceedReportDTO> loadExceedCustomerList= new ArrayList<LoadExceedReportDTO>();   //getInfoindividual();
+		loadExceedCustomerList =getInfoindividual();
 		over.setFontAndSize(bfb, 10);
 		over.showTextAligned(PdfContentByte.ALIGN_LEFT,this.getBill_year()+this.getBill_month()+this.getCustomer_id(), 115, 665, 0);			
 		
@@ -223,7 +223,6 @@ public class MaxLoadExceedNotice extends BaseAction {
 				+ "          GROUP BY CUSTOMER_ID, BILLING_MONTH, BILLING_YEAR) tbl, "
 				+ "         MVIEW_CUSTOMER_INFO mci "
 				+ "   WHERE     tbl.customer_id = mci.customer_id "
-				+ "         AND BILLING_YEAR = 2019 "
 				+ "         AND mci.customer_id = '"+this.getCustomer_id()+"' "
 				+ "         AND billing_month = "+getBill_month()
 				+ "         AND billing_year = "+getBill_year();

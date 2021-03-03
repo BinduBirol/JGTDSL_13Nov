@@ -188,6 +188,14 @@
 					<img src="/JGTDSL_WEB/resources/images/icons/sb_bill_process_16.png" />
 					Bill Creation(Meter)
 				</a>
+				
+				
+				<a href="javascript:void(0)" onclick="callAction('billCreationHome.action?bill_parameter.isMetered_str=2')" class="list-group-item">
+					<img src="/JGTDSL_WEB/resources/images/icons/sb_bill_process_16.png" />
+					Bill Creation For(Exception)
+				</a>
+				
+				
 				<a href="javascript:void(0)" onclick="callAction('billCreationHome.action?bill_parameter.isMetered_str=0')" class="list-group-item">
 					<img src="/JGTDSL_WEB/resources/images/icons/sb_calcualte_16.png" />
 					Bill Creation(Non-meter) <font style="color: gray;"></font>
@@ -479,7 +487,36 @@
 					  <img src="/JGTDSL_WEB/resources/images/icons/sb_authorization_16.png" />
 					  MPG Dashboard
 		  		</a></div>
+		  <div class="list-group">
+		  <a href="javascript:void(0)" onclick="callAction('mpgBank.action')" class="list-group-item">						  
+					  <img src="/JGTDSL_WEB/resources/images/icons/sb_authorization_16.png" />
+					  MPG Bank
+		  		</a></div>		
 	</div>
+	
+	
+	
+	</section>
+</s:if>
+
+<s:if test="#session.role=='Super Admin'|| #session.role=='BANK'">
+	<section>
+	<h3>
+		<span class="z-icon">
+			<i class="fa fa-gears baseline"> </i>
+		</span>	
+		BANK
+	</h3>
+	<div>
+		<div class="list-group">
+		  <a href="javascript:void(0)" onclick="callAction('bankCollectionHomeNM.action')" class="list-group-item">
+			  		<img src="/JGTDSL_WEB/resources/images/icons/sb_collection_16.png" />
+			  		 Collection
+			  	(Non-Metered)</a>
+	</div>
+	
+	
+	
 	</section>
 </s:if>
 

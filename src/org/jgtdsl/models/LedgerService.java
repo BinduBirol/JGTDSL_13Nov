@@ -102,7 +102,7 @@ public class LedgerService {
 					+ "                getBankBranch(BRANCH_ID) BANK_NAME,   "
 					+ "                 TO_CHAR (bnm.COLLECTION_DATE) COLLECTION_DATE,  "
 					+ "                 MON || ', ' || BILL_YEAR DESCRIPTION,  "
-					+ "                 TOTAL_CONSUMPTION BILLED_CONSUMPTION,  "
+					+ "                 round(TOTAL_CONSUMPTION,3) BILLED_CONSUMPTION,  "
 					+ "                 BILLED_AMOUNT,  "
 					+ "                 NULL METER_RENT,  "
 					+ "                 NULL CMS_RENT,  "

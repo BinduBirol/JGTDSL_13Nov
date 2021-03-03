@@ -2,7 +2,10 @@ package org.jgtdsl.actions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
+import org.apache.struts2.ServletActionContext;
 import org.jgtdsl.dto.ClearnessDTO;
 import org.jgtdsl.dto.CollectionDTO;
 import org.jgtdsl.dto.CustomerApplianceDTO;
@@ -20,6 +23,7 @@ public class WebSite extends BaseAction{
 	private String customer_id;
 	private String bill_month;
 	private String bill_year;
+	private String area_name;
 	
 
 	
@@ -137,6 +141,7 @@ public class WebSite extends BaseAction{
 
 							
 				responseHtml +="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"+
+						"<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css'>"+
 						"<script type='text/javascript'> " +
 						" function showHideDivs(divId){ " +
 						"  document.getElementById('div__1').style.display='none'; " +
@@ -385,6 +390,18 @@ public class WebSite extends BaseAction{
 				 	"return false;"+
 		   		"}"+
 			"}"+
+/*		   		
+			
+" function downloadpdf(){ "+
+		  	"var d = new Date(),"+
+		     " n = d.getMonth(),"+
+		      "y = d.getFullYear();"+
+
+		  	"$pdfurl='http://103.48.17.216:8080/JGTDSL_WEB/clearnessCertificateInfo.action?area=19&download_type=individual_wise&customer_id='"+
+		  	"+$cust_id+'&report_type=DC&collection_month='+n+'&calender_year='+y+'&officer_name=Mobile App&officer_desig=JGTDSL';"+
+		  	"window.open($pdfurl);"+
+
+		  "}"+*/
 
 		    
 " </script>";
@@ -414,7 +431,7 @@ responseHtml+="<div id='div__3' style=''><table width='1000px'  id='rounded-corn
 										   	"<tr>"+
 								   				"<td align=center colspan=7 style='color:green;height=20px;font-size: 15px;'></td>"+
 								   			"</tr>"+
-										   "</tbody>" +
+										   "</tbody>" +								   			
 									   "</table>";
 						
 					}else{
@@ -460,8 +477,8 @@ responseHtml+="<div id='div__3' style=''><table width='1000px'  id='rounded-corn
 						
 									/* payment methods
 									 * */
-						
-							/*	responseHtml+="<div id='flip'>"+
+						/*
+								responseHtml+="<div id='flip'>"+
 										"<table width='1000px' border='0' id='rounded-corner'>"+
 											"<tbody>"+
 												"<tr>"+
@@ -492,16 +509,131 @@ responseHtml+="<div id='div__3' style=''><table width='1000px'  id='rounded-corn
 										"</form>"+
 								"</div>";
 					}
+					
+					
+					
+					Date today = new Date(); // Fri Jun 17 14:54:28 PDT 2016
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(today);
+					
+				//	int month = cal.get(Calendar.MONTH); // 5
+				//	int year = cal.get(Calendar.YEAR); download_type report_type month year officer_name officer_desig
+					int year;
+
+					
+					responseHtml+="<table width='1000px' border='0'  id='rounded-corner'>"+
+							"<tbody>"+
+					
+						"<form action='http://103.48.17.216:8080/JGTDSL_WEB/clearnessCertificateInfo.action'>"+//?area=area_name&download_type=download_type&customer_id="+customer_id+"&report_type=report_type&collection_month=month&calender_year=year&officer_name=officer_name&officer_desig=officer_desig'>"+
+						" <input type='hidden' id='area' name='area' value=19>"+
+						" <input type='hidden' id='download_type' name='download_type' value='individual_wise'>"+
+						" <input type='hidden' id='customer_id' name='customer_id' value="+customer_id+">"+
+						" <input type='hidden' id='report_type' name='report_type' value='DC'>"+
+						
+						
+						"<tr>"+
+						"<td border='0'> <label style='width: 40%'>To Month<m class='man'/></label> </td>"+
+						"<td><select name='collection_month' id='collection_month'>"+
+						" <option value=''>Select Month</option>"+
+						"</select></td><br>"+
+						
+						"</tr>"+
+					
+						"<tr>"+
+					
+							"<td><label style='width: 40%'>To Year<m class='man'/></label></td>"+
+					
+							"<td><select name='calender_year' id='calender_year'>"+
+							"</select></td><br>"+
+						"</tr>"+	
+							" <input type='hidden' id='officer_name' name='officer_name' value='This is computer genereted'>"+
+							" <input type='hidden' id='officer_desig' name='officer_desig' value='Signature is not required'>"+
 							
+							"<tr>"+
+							"<td align=center colspan=2><input type='submit'align='center'  class='btn btn-primary' value='Download Clearance Certificate'></td>"+
+							"</tr>"+
+							"</tbody>"+
+							"</table>"+
+							
+						"</form> ";
+							
+							
+							
+					
+					
+/*responseHtml+=
+				"<select id='date-dropdown'>"+
+		
+				"</select>";*/
+					
+					responseHtml +="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"+
+							"<script type='text/javascript'> " +
+							"var d = new Date();"+
+							"var monthArray = new Array();"+
+							"monthArray[0] = 'January';"+
+							"monthArray[1] = 'February';"+
+							"monthArray[2] = 'March';"+
+							"monthArray[3] = 'April';"+
+							"monthArray[4] = 'May';"+
+							"monthArray[5] = 'June';"+
+							"monthArray[6] = 'July';"+
+							"monthArray[7] = 'August';"+
+							"monthArray[8] = 'September';"+
+							"monthArray[9] = 'October';"+
+							"monthArray[10] = 'November';"+
+							"monthArray[11] = 'December';"+
+							"for(m = 0; m <= 11; m++) {"+
+							"var optn = document.createElement('OPTION');"+
+							" optn.text = monthArray[m];"+
+							"optn.value = (m+1);"+
+							"if ( m == optn.text) {"+
+							"optn.selected = true;"+
+							"}"+
+							"document.getElementById('collection_month').options.add(optn);"+
+							"}"+
+					
+					" </script>";
+				
+responseHtml +="<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"+
+		"<script type='text/javascript'> " +
+			"let dateDropdown = document.getElementById('calender_year');"+	
+		"let currentYear = new Date().getFullYear();"+
+			"let earliestYear = 1970;"+
+		"while (currentYear >= earliestYear) {"+
+			"let dateOption = document.createElement('option');"+
+		"dateOption.text = currentYear;"+
+			"dateOption.value = currentYear;"+
+		"dateDropdown.add(dateOption);"+
+			"currentYear -= 1;"+
+		"}"+
+		" </script>";
+
+
+					
+					
+					//bindu clear
+	/*				responseHtml+="<div id=''>"+
+							"<table width='1000px' border='0' id=''>"+
+								"<tbody>"+
+									"<tr>"+
+									   "<td align=center colspan=7><br/><a class='btn btn-primary' href='http://103.48.17.216:8080/JGTDSL_WEB/clearnessCertificateInfo.action?area=19&download_type=individual_wise&customer_id="+customer_id+"&report_type=DC&collection_month=12&calender_year=year&officer_name=Website&officer_desig=JGTDSL'>Download Clearance Certificate</a></td>"+
+									//	"<td align=center colspan=7><br/><input type='button' class='btn btn-sm btn-success'  onclick=saveDate_month() value='Download Clearance Certificate'></td>"+
+									//"<div style='float: center; colspan=7'><input type='button' class='btn btn-sm btn-success'  onclick='saveBooking()' value='Download Clearance Certificate'></div>"+
+									"</tr>"+			
+								"</tbody>"+
+							"</table>"+
+						"</div>";
 	
 					responseHtml+="</div>" +
-							"</body>";			
+							"</body>";	*/		
+					
+		
 			
 					
 		}
 		
-		setJsonResponse("jsonPresponse({\"response\":\""+responseHtml+"\"})");
-		//setJsonResponse(responseHtml);
+	//	setJsonResponse("jsonPresponse({\"response\":\""+responseHtml+"\"})");
+		setJsonResponse(responseHtml);
 		return null;
 	}
 

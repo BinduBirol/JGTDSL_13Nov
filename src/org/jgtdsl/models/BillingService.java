@@ -67,7 +67,7 @@ public class BillingService {
 				// System.out.println("===>>Procedure : [GENERATEBILL_NONMETERED] START");
 				stmt = (OracleCallableStatement) conn
 						.prepareCall("{ call GENERATEBILL_NONMETERED(?,?,?,?,?,?,?,?,?,?,?,?,?,?)  }");
-			}
+			}  
 			// System.out.println("==>>Procedure : END");
 
 			stmt.setString(1, bill_parameter.getBill_for());
@@ -104,6 +104,58 @@ public class BillingService {
 				response.setResponse(true);
 			} else {
 				// response.setMessasge("Need to show error message here....");
+				response.setResponse(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setMessasge(e.getMessage());
+			response.setResponse(false);
+		} finally {
+			try {
+				stmt.close();
+				ConnectionManager.closeConnection(conn);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			stmt = null;
+			conn = null;
+		}
+
+		return response;
+
+	}
+	
+	public ResponseDTO processBillException(BillingParamDTO bill_parameter) {
+		ResponseDTO response = new ResponseDTO();
+		Connection conn = ConnectionManager.getConnection();
+		OracleCallableStatement stmt = null;
+		int response_code = 0;
+
+		try {
+
+			stmt = (OracleCallableStatement) conn
+					.prepareCall("{ call generate_manual_bill(?,?,?,?,?,?,?,?,?,?,?,?,?)  }");
+
+			stmt.setString(1, bill_parameter.getCustomer_id());
+			stmt.setString(2, bill_parameter.getBilling_month_str());
+			stmt.setString(3, bill_parameter.getBilling_year());
+			stmt.setString(4, bill_parameter.getIssue_date());
+			stmt.setString(5, bill_parameter.getBill_due_date());
+			stmt.setString(6, bill_parameter.getBill_due_date_w_sur());
+			stmt.setString(7, bill_parameter.getGasBill());
+			stmt.setString(8, bill_parameter.getDemandCharge());
+			stmt.setString(9, bill_parameter.getSurcharge());
+			stmt.setString(10, bill_parameter.getRemarks());
+			stmt.setString(11, bill_parameter.getHnvBill());
+			stmt.registerOutParameter(12, java.sql.Types.INTEGER);
+			stmt.registerOutParameter(13, java.sql.Types.VARCHAR);				
+
+			stmt.executeUpdate();
+			response_code = stmt.getInt(12);
+			response.setMessasge(stmt.getString(13));
+			if (response_code == 1) {				
+				response.setResponse(true);
+			} else {				
 				response.setResponse(false);
 			}
 		} catch (Exception e) {

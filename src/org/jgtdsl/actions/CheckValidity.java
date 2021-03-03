@@ -64,7 +64,8 @@ public class CheckValidity extends BaseAction{
 				//if is added for admin role who can access all banks of all area ~Prince~Feb 17
 				if(loggedInUser.getDesignation_id().equals("02")){						
 					session.put("USER_BANK_LIST", BankBranchService.getBankList(0,0,"bank.status=1 "+"","bank.AREA_ID","ASC",999999));	
-					session.put("USER_BANK_LIST_COL", BankBranchService.getBankListforCol(0,0,"bank.status=1 "+"","bank.AREA_ID","ASC",999999));	
+					session.put("USER_BANK_LIST_COL", BankBranchService.getBankListforCol(0,0,"bank.status=1 "+"","bank.AREA_ID","ASC",999999));
+					session.put("BANK_USER_BANK_LIST_COL", BankBranchService.getBankListforBankCol(0,0,user.getUserId()+" "," ","ASC",999999));
 					session.put("USER_AREA_LIST", userService.getUserAreaList(loggedInUser.getUserId()));
 					session.put("AREA_ZONE", userService.getUserZoneList(Utils.EMPTY_STRING));
 					session.put("USER_AREA", AreaService.getAreaList(0,0,"status=1 and AREA_ID='"+loggedInUser.getArea_id()+"'",Utils.EMPTY_STRING,Utils.EMPTY_STRING,0));

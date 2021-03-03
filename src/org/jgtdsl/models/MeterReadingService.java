@@ -692,6 +692,41 @@ public class MeterReadingService {
 	}
 	
 	
+	public ArrayList<MeterReadingDTO> getExceptionReading(String customer_id,String bill_month,String bill_year )
+	{		
+		Connection conn = ConnectionManager.getConnection();
+		
+		String sql= "select meter_reading.*,to_char(CURR_READING_DATE,'dd-mm-yyyy') as CURR_READING_DATE_m, to_char(PREV_READING_DATE,'dd-mm-yyyy') as PREV_READING_DATE_m from meter_reading where customer_id='"+customer_id+"' and BILLING_MONTH="+bill_month+" and BILLING_YEAR= "+bill_year+" ";
+		PreparedStatement stmt = null;
+		ResultSet r = null;
+		MeterReadingDTO mrd= null;   
+		ArrayList<MeterReadingDTO> readingList= new ArrayList<MeterReadingDTO>();
+		try
+			{
+				stmt = conn.prepareStatement(sql);
+				r = stmt.executeQuery();
+				if (r.next())
+				{									
+					mrd= new MeterReadingDTO();
+					mrd.setActual_consumption(r.getDouble("ACTUAL_CONSUMPTION"));
+					mrd.setCurr_reading(r.getLong("CURR_READING"));
+					mrd.setCurr_reading_date(r.getString("CURR_READING_DATE_m"));
+					mrd.setPrev_reading(r.getLong("PREV_READING"));
+					mrd.setPrev_reading_date(r.getString("PREV_READING_DATE_m"));
+					mrd.setMeter_rent(r.getDouble("METER_RENT"));
+					mrd.setRate(r.getDouble("RATE"));
+					readingList.add(mrd);
+				}
+			} 
+			catch (Exception e){e.printStackTrace();}
+	 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+				{e.printStackTrace();}stmt = null;conn = null;}
+		
+		
+		return readingList;	 	
+	}
+	
+	
 	
 	public boolean hasEvent(String customer_id, int bmonth, int byear )
 	{		

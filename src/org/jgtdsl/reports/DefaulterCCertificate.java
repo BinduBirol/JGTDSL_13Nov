@@ -460,11 +460,14 @@ public class DefaulterCCertificate extends ActionSupport implements
 							customerInfo.getAmountInWords(), 95, 221, 0);
 					// signature
 					over.setFontAndSize(bf, 7);
-					over.showTextAligned(PdfContentByte.ALIGN_LEFT,
-							officer_name + ", " + officer_desig, 457, 468, 0);
+					over.showTextAligned(PdfContentByte.ALIGN_LEFT,	officer_name , 457, 468, 0);
 					over.setFontAndSize(bf, 7);
-					over.showTextAligned(PdfContentByte.ALIGN_LEFT,
-							officer_name + ", " + officer_desig, 457, 165, 0);
+					over.showTextAligned(PdfContentByte.ALIGN_LEFT, officer_desig, 457, 460, 0);
+					
+					over.setFontAndSize(bf, 7);
+					over.showTextAligned(PdfContentByte.ALIGN_LEFT,	officer_name , 457, 165, 0);
+					over.setFontAndSize(bf, 7);
+					over.showTextAligned(PdfContentByte.ALIGN_LEFT, officer_desig, 457, 158, 0);
 				}
 				// / website and email
 				over.setFontAndSize(bf, 6);

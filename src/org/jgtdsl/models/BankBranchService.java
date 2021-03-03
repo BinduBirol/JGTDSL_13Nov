@@ -187,6 +187,64 @@ public class BankBranchService {
 		return bankList;
 	}
 	
+	public static ArrayList<BankDTO> getBankListforBankCol(int index, int offset,String whereClause,String sortFieldName,String sortOrder,int total)
+	{
+		BankDTO bank=null;
+		ArrayList<BankDTO> bankList=new ArrayList<BankDTO>();
+		Connection conn = ConnectionManager.getConnection();
+		String sql="";
+		String orderByQuery="";
+
+		
+			     sql="  SELECT DISTINCT bank.bank_id, " +
+			    		 "                  bank.AREA_ID, " +
+			    		 "                  bank.bank_name  bank_name, " +
+			    		 "                  bank.address, " +
+			    		 "                  bank.phone, " +
+			    		 "                  bank.fax, " +
+			    		 "                  bank.email, " +
+			    		 "                  bank.url, " +
+			    		 "                  bank.description, " +
+			    		 "                  bank.status, BRANCH.BRANCH_NAME, BRANCH.BRANCH_ID " +
+			    		 "    FROM MST_BANK_INFO bank, MST_BRANCH_INFO branch, mst_user mu " +
+			    		 "   WHERE bank.bank_id = branch.bank_id and bank.status<>0  AND MU.EMAIL_ADDRESS = bank.bank_id AND MU.USERID = '"+whereClause.replace(" ", "")+"' ";
+		
+		   
+		   PreparedStatement stmt = null;
+		   ResultSet r = null;
+			try
+			{
+				stmt = conn.prepareStatement(sql);
+				if(total==999999 || total==0){
+					//do nothing
+				}
+				else{
+				stmt.setInt(1, index);
+				stmt.setInt(2, index+offset);
+				}
+				r = stmt.executeQuery();
+				while (r.next())
+				{
+					bank=new BankDTO();
+					bank.setBank_id(r.getString("BANK_ID"));
+					bank.setBank_name(r.getString("BANK_NAME"));
+					bank.setAddress(r.getString("ADDRESS"));
+					bank.setPhone(r.getString("BRANCH_NAME"));
+					bank.setFax(r.getString("BRANCH_ID"));
+					bank.setEmail(r.getString("EMAIL"));
+					bank.setUrl(r.getString("URL"));
+					bank.setDescription(r.getString("DESCRIPTION"));
+					bank.setStatus(r.getInt("STATUS"));
+					bankList.add(bank);
+				}
+			} 
+			catch (Exception e){e.printStackTrace();}
+	 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+				{e.printStackTrace();}stmt = null;conn = null;}
+		
+		return bankList;
+	}
+	
 	public ArrayList<BankDTO> getBankList()
 	{
 		return getBankList(0, 0,Utils.EMPTY_STRING,Utils.EMPTY_STRING,Utils.EMPTY_STRING,0);
@@ -249,6 +307,56 @@ public class BankBranchService {
 		return bankList;
 		
 	}
+	
+	public static ArrayList<BankDTO> getMpgBankList(int index, int offset,String whereClause,String sortFieldName,String sortOrder,int total)
+	{
+		BankDTO bank=null;
+		ArrayList<BankDTO> bankList=new ArrayList<BankDTO>();
+		Connection conn = ConnectionManager.getConnection();
+		String sql="";
+		String orderByQuery="";
+		/*
+		if(whereClause.contains("status") & !whereClause.contains(".status"))
+			whereClause=whereClause.replace("status", "bank.status");
+		*/
+		if(sortFieldName!=null && !sortFieldName.equalsIgnoreCase(""))
+			orderByQuery=" ORDER BY "+sortFieldName+" " +sortOrder+" ";
+		if(total==0)
+				  sql = "  SELECT USERNAME, BANK_NAME, ADDRESS " +
+							"    FROM MPG_USERINFO mu, MST_BANK_INFO mbi " +
+							"   WHERE MU.FULLNAME = MBI.BANK_NAME " +
+							"GROUP BY USERNAME, BANK_NAME, ADDRESS " +
+							orderByQuery ;
+		else
+				  sql="  SELECT USERNAME, BANK_NAME, ADDRESS " +
+							"    FROM MPG_USERINFO mu, MST_BANK_INFO mbi " +
+							"   WHERE MU.FULLNAME = MBI.BANK_NAME " +
+							"GROUP BY USERNAME, BANK_NAME, ADDRESS " +
+							orderByQuery ;
+		   
+		   PreparedStatement stmt = null;
+		   ResultSet r = null;
+			try
+			{
+				stmt = conn.prepareStatement(sql);
+				
+				r = stmt.executeQuery();
+				while (r.next())
+				{
+					bank=new BankDTO();
+					bank.setBank_id(r.getString("USERNAME"));
+					bank.setBank_name(r.getString("BANK_NAME"));
+					bank.setAddress(r.getString("ADDRESS"));					
+					bankList.add(bank);
+				}
+			} 
+			catch (Exception e){e.printStackTrace();}
+	 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+				{e.printStackTrace();}stmt = null;conn = null;}
+		
+		return bankList;
+		
+	}
 
 	public ArrayList<BankDTO> getAllBankList()
 	{
@@ -290,6 +398,37 @@ public class BankBranchService {
 	 		return Utils.getJsonString(AC.STATUS_ERROR, AC.MSG_CREATE_ERROR_PREFIX+AC.MST_CUSTOMER_CATEGORY);
 
 	}
+	
+	
+	public String updateMpgBank(String data)
+	{
+		Gson gson = new Gson();  
+		BankDTO bankDTO = gson.fromJson(data, BankDTO.class);  	
+		Connection conn = ConnectionManager.getConnection();
+		String sql=" Update MST_BANK_INFO Set ADDRESS=? where BANK_NAME=? ";
+		int response=0;
+		PreparedStatement stmt = null;
+			try
+			{
+				stmt = conn.prepareStatement(sql);
+				
+				stmt.setString(1,bankDTO.getAddress());
+				stmt.setString(2,bankDTO.getBank_name());				
+				response = stmt.executeUpdate();
+			} 
+			catch (Exception e){e.printStackTrace();
+			return Utils.getJsonString(AC.STATUS_ERROR, e.getMessage());
+			}
+	 		finally{try{stmt.close();ConnectionManager.closeConnection(conn);} catch (Exception e)
+				{e.printStackTrace();}stmt = null;conn = null;}
+	 		
+	 	if(response==1)
+	 		return Utils.getJsonString(AC.STATUS_OK, "Updated Successfully");
+	 	else
+	 		return Utils.getJsonString(AC.STATUS_ERROR, AC.MSG_UPDATE_ERROR_PREFIX+AC.MST_BANK);
+
+	}	
+	
 	public String updateBank(String data)
 	{
 		Gson gson = new Gson();  

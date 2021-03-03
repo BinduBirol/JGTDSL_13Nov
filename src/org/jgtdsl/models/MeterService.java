@@ -390,14 +390,17 @@ public class MeterService {
 					meter.setReading(reading);
 				}
 				
+				
 				if(r.getString("MinMaxLoad").equalsIgnoreCase("")){
+					meter.setMin_load("0");
+					meter.setMax_load("0");
+					
+					
+				}else{
 					String [] min_max_load= r.getString("MinMaxLoad").split("#");
 					
 					meter.setMin_load(min_max_load[0]);
 					meter.setMax_load(min_max_load[1]);
-				}else{
-					meter.setMin_load("0");
-					meter.setMax_load("0");
 				}
 				
 				

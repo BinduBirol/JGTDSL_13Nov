@@ -74,14 +74,16 @@ $("#bill_delete_grid").jqGrid($.extend(true, {}, scrollPagerGridOptions, {
 	            		align:'center',
 	            		formatter: function(cellvalue, options, rowObject){	            			
 	            			
-	                          return "<button class='btn btn-danger' ><span class='ui-icon 	ui-icon-closethick' style='align:center;   '></span></button>"
+	                          return "<button class='btn btn-danger' onclick=\"deleteBillByBillId('"+rowObject.month_year_customer_id+"')\" ><span class='ui-icon 	ui-icon-closethick' style='align:center;   '></span></button>"
 	          
 	                    },
-	                    cellattr: function (rowId, tv, rowObject, cm, rdata) {                 	
-	                    	
-	                    	return ' onClick="deleteBillByBillId('+rowObject.month_year_customer_id+')"';
-	                    },
+	                    cellattr: function (rowId, tv, rowObject, cm, rdata) { 
+	                           	
 	                    
+	                    //	return 'onclick="deleteBillByBillId("'+rowObject.month_year_customer_id+'")"';
+	                   
+	                    },
+	                     
 	                }
 	        ],
 	datatype: 'local',
